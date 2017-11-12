@@ -1,9 +1,8 @@
-# Learning Crosslingual Word Embeddings
+# Final Project: Learning Crosslingual Word Embeddings
 >   
 _Roseanna Hopper, Mona Iwamoto, Maya Miller-Vedam_   
-Final Project, w266 : Natural Language Processing  
-UC Berkeley School of Information   
-MIDS, Fall 2017  
+MIDS w266 : Natural Language Processing    
+UC Berkeley School of Information, Fall 2017  
 
 **About this Project**
 _fill in smth. here before sharing this repo with others_
