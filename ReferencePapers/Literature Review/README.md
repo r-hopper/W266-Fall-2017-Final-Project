@@ -1,4 +1,4 @@
-**Täckström et al. (2012): [Cross-lingual Word Clusters for Direct Transfer of Linguistic Structure](https://arxiv.org/pdf/1309.4168.pdf)**
+**Täckström et al. (2012): [Cross-lingual Word Clusters for Direct Transfer of Linguistic Structure](http://aclweb.org/anthology/N12-1052)**
 * Applying a model built on a resource-rich language to a resource-poor language
 
 **Klementiev (2012): [Inducing Crosslingual Distributed Representations of Words](http://www.aclweb.org/anthology/C12-1089)**
