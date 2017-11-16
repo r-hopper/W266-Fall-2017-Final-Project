@@ -1,6 +1,11 @@
 # Maya's Reading Notes
 I need to figure out the right place in the repo for this stuff... just putting it here for now...
 
+## [Irvine and Callison-Burch](http://www.mitpressjournals.org/doi/full/10.1162/COLI_a_00284)
+* this is an excellent overview of the bilingual induction task
+* don't have time for notes now but I'm coming back for a close read later
+* Note that in their lit review they cite (Rapp 1995) as the earliest attempt to use context to determine translation.
+
 ### [Bablyon Partners Repo](https://github.com/Babylonpartners/fastText_multilingual), Readme & [associated paper](https://arxiv.org/abs/1702.03859).
 
 **Summary**
