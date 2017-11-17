@@ -1,6 +1,21 @@
 # Maya's Reading Notes
 I need to figure out the right place in the repo for this stuff... just putting it here for now...
 
+# Contents
+* [General Notes & Thoughts](#general-notes)
+* [MIT Article](Irvine-and-Callison-Burch-2017): overview of bilingual induction task & history
+* [Babylon Repo & Paper](Babylon-Partners-Repo)
+* [Paper Introducing Polyglot](Paper-Introducing-Polyglot)
+
+# General Notes
+* All of these papers talk about English as the language with the most annotated resources & cite that as a weakness in multilingual NLP... it would be interesting to try and get more information about whether this is changing & if so at what rate... Also is there a chance that the perception is skewed because these papers are written by researchers who write in English (and work at companies who serve majority english speaking  services)? (I don't actually doubt that statement ... just wondering if there's more to the picture)
+* After reading #1 below I wonder if we should focus narrowly on a translation task that is 1) lay-person comprehensible (eg. polysemy, or use of idiom) and then demonstrate/discuss how the progression of the "state of the art" has shown better and better performance on this task (culminating in the Duong embeddings) <-- this would be a pretty major course shift... its probably not necessary, just potentially interesting.
+
+### [Irvine and Callison-Burch 2017](http://www.mitpressjournals.org/doi/full/10.1162/COLI_a_00284)
+* this is an excellent overview of the bilingual induction task
+* don't have time for notes now but I'm coming back for a close read later
+* Note that in their lit review they cite (Rapp 1995) as the earliest attempt to use context to determine translation.
+
 ### [Bablyon Partners Repo](https://github.com/Babylonpartners/fastText_multilingual), Readme & [associated paper](https://arxiv.org/abs/1702.03859).
 
 **Summary**
@@ -37,4 +52,3 @@ ICLR 2017 (conference track)
 
 **Citation**
 > Rami Al-Rfou, Bryan Perozzi and Steven Skiena. "Polyglot: Distributed Word Representations for Multilingual NLP" _Proceedings of the Seventeenth Conference on Computational Natural Language Learning_ pages 183–192, Sofia, Bulgaria, August 8-9 2013. ⃝c 2013 Association for Computational Linguistics
-
