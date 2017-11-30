@@ -23,4 +23,4 @@ ${HOME}/anaconda2/bin/jupyter notebook --generate-config
 # Copy Jupyter config
 popd
 mkdir ${HOME}/.jupyter
-cp -v $(dirname $0)/support/jupyter_notebook_config.py ${HOME}/.jupyter/jupyter_notebook_config.py
+cp -v $(dirname $0)/jupyter_notebook_config.py ${HOME}/.jupyter/jupyter_notebook_config.py
