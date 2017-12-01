@@ -9,7 +9,6 @@ _fill in smth. here before sharing this repo with others_
 
 
 ## Quick Links
-* [Project Proposal G-Doc](https://docs.google.com/document/d/1KetDWpYzTtGK18eEqWcLiTbOCSH0ReBHH3oOpfCfLaI/edit)
 *  [Original Paper](https://arxiv.org/pdf/1606.09403.pdf) Duong, Long & Kanayama, Hiroshi & Ma, Tengfei & Bird, Steven & Cohn, Trevor. (2016). Learning Crosslingual Word Embeddings without Bilingual Corpora. 1285-1295. 10.18653/v1/D16-1136.
 * [PanLex](https://panlex.org/) ; plus their [API Documentation](https://dev.panlex.org/api/)
 * [Polyglot](http://polyglot.readthedocs.io/en/latest/modules.html) ; plus Rami Al-Rfou's [Demo & Tutorial](https://sites.google.com/site/rmyeid/projects/polyglot) including [Wikipedia Text Dumps](https://sites.google.com/site/rmyeid/projects/polyglot#TOC-Download-Wikipedia-Text-Dumps)
@@ -28,10 +27,10 @@ _fill in smth. here before sharing this repo with others_
 * Draft Milestone due Nov 16 (Maya)
   > DONE 11/12: see [Deliverables](./Deliverables) folder above.
 * Look for baseline model implementations in Python (Roseanna)
-  > DONE 11/13: see [Baseline Models](./BaselineModels); they all appear to be in C. 
+  > DONE 11/13: see [Baseline Models](./BaselineModels); they all appear to be in C.
 
 
 ## Other Links
-* LM Thang's Neural Machine Translation [Thesis Repo](https://github.com/lmthang/thesis/blob/master/thesis.pdf) See Chapters 1 & 2 for an overview/ history of NMT.
 * Open NMT [project website](http://opennmt.net/FAQ/#where-can-i-get-training-data-for-translation-from-x-to-x)
 * OPUS [open source parallel corpus](http://opus.nlpl.eu) -- note that this cite also has a bunch of Machine Translation links.
+* [Project Proposal G-Doc](https://docs.google.com/document/d/1KetDWpYzTtGK18eEqWcLiTbOCSH0ReBHH3oOpfCfLaI/edit)
