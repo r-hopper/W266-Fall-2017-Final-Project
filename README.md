@@ -12,6 +12,7 @@ _fill in smth. here before sharing this repo with others_
 *  [Original Paper](https://arxiv.org/pdf/1606.09403.pdf) Duong, Long & Kanayama, Hiroshi & Ma, Tengfei & Bird, Steven & Cohn, Trevor. (2016). Learning Crosslingual Word Embeddings without Bilingual Corpora. 1285-1295. 10.18653/v1/D16-1136.
 * [PanLex](https://panlex.org/) ; plus their [API Documentation](https://dev.panlex.org/api/)
 * [Polyglot](http://polyglot.readthedocs.io/en/latest/modules.html) ; plus Rami Al-Rfou's [Demo & Tutorial](https://sites.google.com/site/rmyeid/projects/polyglot) including [Wikipedia Text Dumps](https://sites.google.com/site/rmyeid/projects/polyglot#TOC-Download-Wikipedia-Text-Dumps)
+* [Word2Vec in TensorFlow Tutorial](http://adventuresinmachinelearning.com/word2vec-tutorial-tensorflow/) from Adventures in Machine Learning.
 
 ## TO DO
 * Work through [this Tensorflow NMT tutorial](https://research.googleblog.com/2017/07/building-your-own-neural-machine.html) (all)
