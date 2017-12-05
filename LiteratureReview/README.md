@@ -16,3 +16,8 @@
 ### Maya's Stray Thoughts 11/16
 * All of these papers talk about English as the language with the most annotated resources & cite that as a weakness in multilingual NLP... it would be interesting to try and get more information about whether this is changing & if so at what rate... Also is there a chance that the perception is skewed because these papers are written by researchers who write in English (and work at companies who serve majority english speaking  services)? (I don't actually doubt that statement ... just wondering if there's more to the picture)
 * After reading the MIT article by [Irvine-Callison-Burch 2017](./Irvine-Callison-Burch-2017.md) I wonder if we should focus narrowly on a translation task that is 1) lay-person comprehensible (eg. polysemy, or use of idiom) and then demonstrate/discuss how the progression of the "state of the art" has shown better and better performance on this task (culminating in the Duong embeddings) <-- this would be a pretty major course shift... its probably not necessary, just potentially interesting.
+
+###  New Research
+* *Unsupervised Machine Translation
+Using Monoligual Corpora Only* -- James directed us to this paper.  https://arxiv.org/pdf/1711.00043.pdf
+
