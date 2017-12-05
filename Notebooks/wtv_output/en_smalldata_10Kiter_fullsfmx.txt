@@ -1,0 +1,439 @@
+Initialized
+Average loss at step  0 :  8.63881111145
+Nearest to been: whom, An, Pure, recordings, 1963, jaw, magnesium, day,
+Nearest to where: hundreds, attraction, agents, vast, stable, own, overall, patch,
+Nearest to also: makes, reversed, produce, imagery, intended, 1913, Anatolia, Among,
+Nearest to was: one-third, 17, mouths, refer, Food, gaseous, generate, decades,
+Nearest to were: conclusion, kind, hex, identified, review, Frank, DNA, superior,
+Nearest to about: song, grown, world, foundation, either, blind, various, C,
+Nearest to them: origin, lines, chose, lighter, Nixon, young, ears, Delos,
+Nearest to Alabama: No, animals, recording, fly, bone, level, opposite, relations,
+Nearest to these: lower, victory, Australia, reduction, Bill, electronic, intact, course,
+Nearest to form: Andorran, tail, Barbara, continental, applied, operates, headed, =,
+Nearest to but: film, displayed, guided, running, administration, plant, civilian, squares,
+Nearest to from: any, residents, religious, display, Hence, Sanskrit, similarity, done,
+Nearest to as: Special, flag, arrows, positions, fluoride, though, organs, crowd,
+Nearest to It: variations, francium, bad, move, injuries, ethics, creatures, therapy,
+Nearest to ": comprising, files, one-third, story, money, vertebrates, denotes, thinking,
+Nearest to one: traveled, run, visual, burned, become, Julian, Carolina, Time,
+Average loss at step  100 :  7.16583651066
+Average loss at step  200 :  6.18561856508
+Average loss at step  300 :  5.87145637989
+Average loss at step  400 :  5.96238536835
+Average loss at step  500 :  6.06640111923
+Nearest to been: whom, Pure, An, recordings, 1963, jaw, day, feminist,
+Nearest to where: hundreds, attraction, agents, stable, vast, own, overall, patch,
+Nearest to also: makes, produce, reversed, imagery, 1913, intended, cost, Anatolia,
+Nearest to was: refer, one-third, mouths, 17, generate, Food, tells, gaseous,
+Nearest to were: conclusion, kind, hex, identified, review, Frank, leaving, superior,
+Nearest to about: song, grown, world, foundation, either, blind, various, Bishop,
+Nearest to them: origin, lines, chose, lighter, young, Delos, Nixon, ears,
+Nearest to Alabama: No, animals, recording, fly, bone, level, opposite, relations,
+Nearest to these: lower, victory, Australia, reduction, Bill, electronic, course, happens,
+Nearest to form: Andorran, tail, Barbara, continental, applied, operates, headed, =,
+Nearest to but: film, displayed, guided, running, administration, plant, civilian, squares,
+Nearest to from: any, residents, religious, Hence, display, Benjamin, Sanskrit, similarity,
+Nearest to as: Special, fluoride, positions, flag, arrows, though, titles, traditions,
+Nearest to It: variations, francium, move, bad, injuries, ethics, creatures, elaborate,
+Nearest to ": comprising, files, money, denotes, one-third, story, vertebrates, thinking,
+Nearest to one: run, traveled, visual, burned, become, Julian, tongue, Carolina,
+Average loss at step  600 :  5.75057482243
+Average loss at step  700 :  5.94776034355
+Average loss at step  800 :  5.33277101755
+Average loss at step  900 :  5.40424947262
+Average loss at step  1000 :  5.88146538973
+Nearest to been: whom, An, Pure, recordings, 1963, jaw, feminist, magnesium,
+Nearest to where: hundreds, attraction, stable, vast, agents, own, overall, patch,
+Nearest to also: makes, produce, imagery, reversed, intended, 1913, cost, continued,
+Nearest to was: refer, generate, mouths, flown, tells, one-third, Food, six,
+Nearest to were: conclusion, kind, hex, identified, leaving, Frank, review, balance,
+Nearest to about: song, grown, world, foundation, either, blind, various, Bishop,
+Nearest to them: origin, chose, lines, lighter, young, Delos, Nixon, ears,
+Nearest to Alabama: No, animals, recording, fly, bone, level, opposite, relations,
+Nearest to these: lower, victory, Australia, reduction, Bill, course, electronic, happens,
+Nearest to form: Andorran, tail, Barbara, continental, applied, operates, headed, =,
+Nearest to but: film, displayed, guided, running, administration, plant, squares, 400,
+Nearest to from: any, residents, religious, Benjamin, Hence, legislature, done, America,
+Nearest to as: Special, fluoride, positions, titles, arrows, flag, though, texts,
+Nearest to It: variations, francium, move, bad, creatures, injuries, ethics, elaborate,
+Nearest to ": comprising, files, money, one-third, vertebrates, story, denotes, thinking,
+Nearest to one: run, traveled, visual, burned, become, tongue, Julian, Time,
+Average loss at step  1100 :  5.73413244724
+Average loss at step  1200 :  5.76285674572
+Average loss at step  1300 :  5.71433571339
+Average loss at step  1400 :  5.59627037048
+Average loss at step  1500 :  5.73278893948
+Nearest to been: whom, An, Pure, recordings, 1963, jaw, feminist, magnesium,
+Nearest to where: hundreds, attraction, stable, vast, agents, own, overall, patch,
+Nearest to also: makes, produce, imagery, reversed, intended, continued, 1913, cost,
+Nearest to was: refer, generate, mouths, tells, flown, had, one-third, is,
+Nearest to were: conclusion, kind, hex, identified, leaving, Frank, review, balance,
+Nearest to about: song, grown, world, foundation, either, blind, Bishop, various,
+Nearest to them: origin, chose, lines, lighter, young, Delos, Nixon, ears,
+Nearest to Alabama: No, animals, recording, fly, bone, level, opposite, relations,
+Nearest to these: lower, victory, Australia, reduction, Bill, electronic, environmental, course,
+Nearest to form: Andorran, tail, Barbara, continental, applied, operates, headed, =,
+Nearest to but: film, displayed, guided, running, plant, administration, squares, 400,
+Nearest to from: any, Benjamin, residents, religious, Hence, legislature, America, countries,
+Nearest to as: Special, fluoride, positions, titles, though, guided, texts, arrows,
+Nearest to It: variations, francium, move, bad, creatures, injuries, ethics, therapy,
+Nearest to ": comprising, files, money, story, one-third, denotes, vertebrates, thinking,
+Nearest to one: run, traveled, visual, burned, become, tongue, Julian, rural,
+Average loss at step  1600 :  5.73011264324
+Average loss at step  1700 :  5.89769645214
+Average loss at step  1800 :  5.64450634956
+Average loss at step  1900 :  5.8179631424
+Average loss at step  2000 :  5.6308050704
+Nearest to been: whom, An, Pure, recordings, 1963, feminist, day, jaw,
+Nearest to where: hundreds, attraction, stable, vast, agents, own, overall, patch,
+Nearest to also: makes, produce, imagery, continued, reversed, 1913, intended, cost,
+Nearest to was: refer, generate, had, is, tells, mouths, flown, six,
+Nearest to were: conclusion, kind, hex, identified, leaving, Frank, review, balance,
+Nearest to about: song, grown, world, foundation, either, blind, Bishop, various,
+Nearest to them: origin, chose, lines, lighter, Delos, young, Nixon, ears,
+Nearest to Alabama: No, animals, recording, fly, bone, level, opposite, relations,
+Nearest to these: lower, victory, Australia, reduction, Bill, environmental, electronic, course,
+Nearest to form: Andorran, tail, Barbara, continental, applied, headed, operates, =,
+Nearest to but: film, displayed, guided, running, plant, administration, 400, squares,
+Nearest to from: any, Benjamin, residents, religious, Hence, legislature, America, All,
+Nearest to as: Special, fluoride, titles, positions, guided, though, texts, and,
+Nearest to It: variations, move, francium, bad, creatures, injuries, ethics, allow,
+Nearest to ": comprising, files, UNK, money, story, one-third, denotes, vertebrates,
+Nearest to one: run, traveled, visual, burned, become, tongue, Julian, rural,
+Average loss at step  2100 :  5.72076571465
+Average loss at step  2200 :  5.60270395756
+Average loss at step  2300 :  5.62113700867
+Average loss at step  2400 :  5.77119040966
+Average loss at step  2500 :  5.75860865116
+Nearest to been: whom, An, Pure, recordings, 1963, feminist, day, magnesium,
+Nearest to where: hundreds, attraction, stable, vast, agents, own, overall, patch,
+Nearest to also: makes, produce, imagery, continued, reversed, 1913, intended, pigs,
+Nearest to was: is, had, generate, refer, mouths, tells, :, six,
+Nearest to were: conclusion, kind, hex, identified, leaving, Frank, balance, lives,
+Nearest to about: song, grown, world, foundation, either, blind, Bishop, various,
+Nearest to them: origin, chose, lines, lighter, Delos, young, Nixon, ears,
+Nearest to Alabama: No, animals, recording, fly, bone, level, opposite, relations,
+Nearest to these: victory, lower, Australia, reduction, Bill, course, electronic, environmental,
+Nearest to form: tail, Andorran, Barbara, continental, applied, headed, =, operates,
+Nearest to but: film, displayed, guided, running, plant, 400, squares, administration,
+Nearest to from: any, Benjamin, residents, legislature, Hence, religious, America, All,
+Nearest to as: Special, fluoride, titles, positions, guided, though, texts, and,
+Nearest to It: variations, move, francium, bad, creatures, injuries, allow, therapy,
+Nearest to ": comprising, files, UNK, one-third, story, money, vertebrates, thinking,
+Nearest to one: run, traveled, visual, burned, become, tongue, Julian, rural,
+Average loss at step  2600 :  5.56214636326
+Average loss at step  2700 :  5.70628196478
+Average loss at step  2800 :  5.66940172672
+Average loss at step  2900 :  5.65249680042
+Average loss at step  3000 :  5.58821433544
+Nearest to been: whom, An, Pure, 1963, recordings, feminist, day, magnesium,
+Nearest to where: hundreds, attraction, stable, vast, agents, own, patch, overall,
+Nearest to also: makes, produce, imagery, continued, reversed, 1913, pigs, intended,
+Nearest to was: is, had, generate, refer, tells, :, mouths, charitable,
+Nearest to were: conclusion, kind, hex, leaving, identified, Frank, lives, balance,
+Nearest to about: song, grown, world, either, foundation, blind, Bishop, various,
+Nearest to them: origin, chose, lines, lighter, Delos, young, Nixon, ears,
+Nearest to Alabama: No, animals, recording, fly, bone, level, opposite, relations,
+Nearest to these: victory, lower, Australia, reduction, Bill, course, electronic, environmental,
+Nearest to form: tail, Andorran, Barbara, continental, applied, headed, =, longer,
+Nearest to but: film, displayed, guided, 400, running, plant, squares, ceremony,
+Nearest to from: Benjamin, any, legislature, residents, Hence, religious, America, countries,
+Nearest to as: Special, titles, fluoride, guided, positions, though, texts, crowd,
+Nearest to It: variations, move, francium, bad, creatures, allow, injuries, therapy,
+Nearest to ": comprising, files, UNK, story, one-third, money, thinking, vertebrates,
+Nearest to one: run, traveled, visual, burned, become, tongue, Julian, rural,
+Average loss at step  3100 :  5.5944314003
+Average loss at step  3200 :  5.768586092
+Average loss at step  3300 :  5.74639869213
+Average loss at step  3400 :  5.50401762486
+Average loss at step  3500 :  5.58206382751
+Nearest to been: whom, An, Pure, 1963, recordings, feminist, day, magnesium,
+Nearest to where: hundreds, attraction, stable, vast, agents, own, patch, Lee,
+Nearest to also: makes, produce, imagery, continued, reversed, 1913, pigs, intended,
+Nearest to was: is, had, generate, refer, tells, charitable, mouths, :,
+Nearest to were: conclusion, kind, hex, leaving, identified, Frank, lives, balance,
+Nearest to about: song, grown, world, either, foundation, blind, Bishop, various,
+Nearest to them: origin, chose, lines, lighter, Delos, young, Nixon, ears,
+Nearest to Alabama: No, animals, fly, recording, bone, level, anterior, relations,
+Nearest to these: victory, lower, Australia, reduction, Bill, course, electronic, environmental,
+Nearest to form: Andorran, tail, Barbara, continental, applied, headed, =, longer,
+Nearest to but: film, displayed, guided, 400, running, plant, ceremony, squares,
+Nearest to from: Benjamin, any, legislature, residents, Hence, religious, countries, All,
+Nearest to as: Special, titles, guided, fluoride, positions, texts, though, arrows,
+Nearest to It: variations, move, francium, bad, creatures, allow, injuries, tendencies,
+Nearest to ": UNK, comprising, files, story, one-third, vertebrates, thinking, money,
+Nearest to one: run, traveled, visual, burned, become, tongue, rural, Julian,
+Average loss at step  3600 :  5.52940207958
+Average loss at step  3700 :  5.68032373428
+Average loss at step  3800 :  5.55142335892
+Average loss at step  3900 :  5.63423369408
+Average loss at step  4000 :  5.54075326443
+Nearest to been: whom, An, Pure, 1963, feminist, recordings, day, magnesium,
+Nearest to where: hundreds, stable, attraction, vast, Lee, own, agents, governors,
+Nearest to also: makes, produce, continued, imagery, reversed, 1913, pigs, hold,
+Nearest to was: is, had, generate, mouths, charitable, tells, refer, 58,
+Nearest to were: conclusion, kind, hex, leaving, identified, Frank, lives, DNA,
+Nearest to about: grown, song, world, either, foundation, blind, Bishop, various,
+Nearest to them: chose, origin, lines, lighter, Delos, young, Nixon, ears,
+Nearest to Alabama: No, animals, fly, recording, bone, level, relations, anterior,
+Nearest to these: victory, lower, Australia, reduction, Bill, electronic, course, environmental,
+Nearest to form: Andorran, tail, Barbara, applied, continental, headed, longer, =,
+Nearest to but: film, displayed, guided, 400, plant, running, squares, ceremony,
+Nearest to from: Benjamin, any, legislature, Hence, residents, countries, All, religious,
+Nearest to as: Special, titles, guided, though, fluoride, positions, and, crowd,
+Nearest to It: variations, move, francium, bad, creatures, allow, tendencies, injuries,
+Nearest to ": UNK, comprising, files, story, one-third, thinking, attacked, vertebrates,
+Nearest to one: run, traveled, visual, burned, become, tongue, rural, Julian,
+Average loss at step  4100 :  5.57979106903
+Average loss at step  4200 :  5.45655615807
+Average loss at step  4300 :  5.23317886829
+Average loss at step  4400 :  5.21753204823
+Average loss at step  4500 :  5.50028913498
+Nearest to been: whom, An, Pure, feminist, 1963, recordings, day, magnesium,
+Nearest to where: hundreds, stable, attraction, vast, Lee, own, Brønsted, governors,
+Nearest to also: makes, produce, continued, imagery, pigs, reversed, 1913, hold,
+Nearest to was: is, had, generate, tells, mouths, charitable, :, 58,
+Nearest to were: conclusion, kind, hex, leaving, identified, Frank, lives, DNA,
+Nearest to about: grown, song, world, either, blind, Bishop, foundation, various,
+Nearest to them: chose, origin, lines, lighter, Delos, young, Nixon, remove,
+Nearest to Alabama: No, animals, fly, recording, bone, level, relations, anterior,
+Nearest to these: victory, lower, Australia, reduction, Bill, course, electronic, environmental,
+Nearest to form: Andorran, tail, Barbara, applied, continental, headed, =, longer,
+Nearest to but: film, displayed, guided, 400, plant, running, squares, ceremony,
+Nearest to from: Benjamin, any, legislature, Hence, residents, All, countries, religious,
+Nearest to as: Special, guided, and, titles, though, crowd, fluoride, positions,
+Nearest to It: variations, move, francium, bad, creatures, allow, tendencies, reached,
+Nearest to ": comprising, files, UNK, story, thinking, vertebrates, one-third, setting,
+Nearest to one: run, traveled, visual, burned, become, tongue, rural, Julian,
+Average loss at step  4600 :  5.51354513645
+Average loss at step  4700 :  5.35952859879
+Average loss at step  4800 :  5.44773070812
+Average loss at step  4900 :  4.769253335
+Average loss at step  5000 :  5.29438469172
+Nearest to been: whom, An, Pure, feminist, 1963, magnesium, recordings, day,
+Nearest to where: hundreds, stable, attraction, Lee, vast, own, governors, Brønsted,
+Nearest to also: makes, produce, continued, imagery, pigs, reversed, 1913, often,
+Nearest to was: is, had, generate, tells, mouths, charitable, Trail, 58,
+Nearest to were: conclusion, kind, hex, leaving, identified, Frank, lives, Air,
+Nearest to about: grown, song, world, either, blind, Bishop, foundation, various,
+Nearest to them: chose, origin, lines, lighter, Delos, young, Nixon, remove,
+Nearest to Alabama: No, animals, fly, recording, bone, level, relations, anterior,
+Nearest to these: victory, lower, Australia, reduction, Bill, course, electronic, environmental,
+Nearest to form: Andorran, tail, Barbara, applied, continental, headed, winner, =,
+Nearest to but: film, displayed, guided, 400, plant, squares, running, circa,
+Nearest to from: Benjamin, any, legislature, Hence, All, countries, religious, residents,
+Nearest to as: Special, guided, and, titles, crowd, positions, though, texts,
+Nearest to It: variations, move, francium, bad, creatures, allow, tendencies, reached,
+Nearest to ": comprising, files, story, thinking, vertebrates, one-third, attacked, setting,
+Nearest to one: run, traveled, visual, burned, become, tongue, rural, markets,
+Average loss at step  5100 :  5.36688662529
+Average loss at step  5200 :  5.42934443951
+Average loss at step  5300 :  5.3794812727
+Average loss at step  5400 :  5.40623859406
+Average loss at step  5500 :  5.31686950207
+Nearest to been: whom, An, Pure, feminist, 1963, will, magnesium, indeed,
+Nearest to where: hundreds, stable, attraction, Lee, vast, sovereign, governors, own,
+Nearest to also: makes, produce, continued, imagery, pigs, reversed, often, 1913,
+Nearest to was: is, had, generate, tells, mouths, 58, charitable, six,
+Nearest to were: conclusion, kind, leaving, hex, identified, Frank, lives, DNA,
+Nearest to about: grown, song, world, blind, either, Bishop, foundation, various,
+Nearest to them: chose, origin, lines, Delos, lighter, young, Nixon, remove,
+Nearest to Alabama: No, animals, fly, recording, bone, level, relations, anterior,
+Nearest to these: victory, lower, Australia, reduction, Bill, course, environmental, effective,
+Nearest to form: Andorran, tail, Barbara, applied, continental, headed, winner, outside,
+Nearest to but: film, displayed, guided, plant, 400, squares, ceremony, circa,
+Nearest to from: Benjamin, any, legislature, Hence, countries, All, residents, religious,
+Nearest to as: Special, guided, titles, though, crowd, and, positions, texts,
+Nearest to It: variations, move, francium, bad, creatures, allow, tendencies, reached,
+Nearest to ": comprising, files, story, thinking, one-third, vertebrates, attacked, setting,
+Nearest to one: run, traveled, visual, burned, tongue, become, rural, markets,
+Average loss at step  5600 :  5.4984404707
+Average loss at step  5700 :  5.46645970821
+Average loss at step  5800 :  5.58041075706
+Average loss at step  5900 :  5.37613372803
+Average loss at step  6000 :  5.5424118948
+Nearest to been: whom, An, Pure, feminist, will, 1963, smooth, indeed,
+Nearest to where: hundreds, stable, attraction, Lee, sovereign, governors, vast, Brønsted,
+Nearest to also: makes, produce, continued, imagery, often, pigs, reversed, 1913,
+Nearest to was: is, had, generate, tells, mouths, 58, charitable, Trail,
+Nearest to were: conclusion, kind, hex, leaving, identified, Frank, lives, DNA,
+Nearest to about: grown, song, world, blind, either, Bishop, foundation, various,
+Nearest to them: chose, origin, lines, Delos, lighter, young, remove, Nixon,
+Nearest to Alabama: No, animals, fly, recording, bone, level, relations, anterior,
+Nearest to these: victory, lower, Australia, reduction, Bill, course, effective, environmental,
+Nearest to form: Andorran, tail, Barbara, applied, continental, headed, winner, outside,
+Nearest to but: film, displayed, guided, 400, plant, squares, ceremony, circa,
+Nearest to from: Benjamin, legislature, any, Hence, All, countries, religious, residents,
+Nearest to as: Special, guided, though, titles, crowd, texts, positions, and,
+Nearest to It: variations, move, bad, francium, creatures, allow, tendencies, reached,
+Nearest to ": comprising, files, story, thinking, one-third, vertebrates, attacked, setting,
+Nearest to one: run, traveled, visual, burned, tongue, become, markets, rural,
+Average loss at step  6100 :  5.30899876595
+Average loss at step  6200 :  5.36688674927
+Average loss at step  6300 :  5.47715024471
+Average loss at step  6400 :  5.21055279016
+Average loss at step  6500 :  5.57379050732
+Nearest to been: whom, An, Pure, feminist, will, smooth, indeed, magnesium,
+Nearest to where: hundreds, stable, attraction, Lee, sovereign, governors, own, vast,
+Nearest to also: makes, produce, continued, often, imagery, pigs, reversed, 1913,
+Nearest to was: is, had, generate, tells, mouths, 58, charitable, Trail,
+Nearest to were: conclusion, kind, hex, leaving, identified, Frank, lives, DNA,
+Nearest to about: grown, song, world, either, blind, Bishop, foundation, various,
+Nearest to them: chose, origin, lines, Delos, lighter, young, Nixon, shadow,
+Nearest to Alabama: No, animals, fly, recording, bone, level, relations, anterior,
+Nearest to these: victory, lower, Australia, reduction, Bill, course, effective, punishment,
+Nearest to form: Andorran, tail, Barbara, applied, continental, headed, outside, longer,
+Nearest to but: film, displayed, guided, 400, plant, squares, circa, ceremony,
+Nearest to from: Benjamin, legislature, any, countries, Hence, religious, All, residents,
+Nearest to as: Special, guided, though, titles, and, crowd, positions, texts,
+Nearest to It: variations, move, francium, bad, creatures, tendencies, allow, reached,
+Nearest to ": comprising, files, story, thinking, one-third, attacked, vertebrates, setting,
+Nearest to one: run, traveled, visual, burned, tongue, become, markets, rural,
+Average loss at step  6600 :  5.44791956902
+Average loss at step  6700 :  5.30287892818
+Average loss at step  6800 :  5.46634899139
+Average loss at step  6900 :  5.36970739365
+Average loss at step  7000 :  5.38946390629
+Nearest to been: whom, An, Pure, feminist, will, smooth, indeed, magnesium,
+Nearest to where: hundreds, stable, attraction, Lee, sovereign, governors, Brønsted, own,
+Nearest to also: makes, produce, continued, often, imagery, pigs, reversed, 1913,
+Nearest to was: is, had, generate, mouths, tells, 58, charitable, Trail,
+Nearest to were: conclusion, kind, hex, leaving, Frank, lives, identified, Air,
+Nearest to about: grown, song, world, either, blind, Bishop, foundation, various,
+Nearest to them: chose, origin, lines, Delos, lighter, young, shadow, remove,
+Nearest to Alabama: No, animals, fly, recording, bone, level, relations, anterior,
+Nearest to these: victory, lower, Australia, reduction, Bill, effective, course, punishment,
+Nearest to form: tail, Andorran, Barbara, applied, continental, outside, headed, longer,
+Nearest to but: film, displayed, guided, 400, plant, ceremony, circa, squares,
+Nearest to from: Benjamin, legislature, any, Hence, countries, for, religious, All,
+Nearest to as: Special, guided, titles, though, crowd, texts, and, Hebrew,
+Nearest to It: variations, move, francium, bad, creatures, tendencies, allow, reached,
+Nearest to ": comprising, files, story, thinking, one-third, attacked, vertebrates, setting,
+Nearest to one: run, traveled, visual, burned, tongue, become, markets, rural,
+Average loss at step  7100 :  5.36200887918
+Average loss at step  7200 :  5.47631443501
+Average loss at step  7300 :  5.59163124084
+Average loss at step  7400 :  5.45865136623
+Average loss at step  7500 :  5.30991089344
+Nearest to been: whom, Pure, An, feminist, will, smooth, magnesium, indeed,
+Nearest to where: hundreds, stable, attraction, Lee, sovereign, governors, Brønsted, own,
+Nearest to also: makes, produce, continued, often, imagery, pigs, reversed, 1913,
+Nearest to was: is, had, generate, tells, charitable, 58, mouths, six,
+Nearest to were: conclusion, kind, hex, leaving, Frank, DNA, lives, Air,
+Nearest to about: grown, song, world, either, blind, Bishop, foundation, various,
+Nearest to them: chose, origin, lines, Delos, lighter, young, shadow, remove,
+Nearest to Alabama: No, animals, fly, recording, level, bone, ideology, anterior,
+Nearest to these: victory, lower, Australia, reduction, Bill, effective, punishment, course,
+Nearest to form: Andorran, tail, Barbara, applied, continental, longer, headed, =,
+Nearest to but: film, displayed, guided, 400, plant, ceremony, circa, squares,
+Nearest to from: Benjamin, legislature, any, countries, Hence, for, religious, All,
+Nearest to as: Special, guided, titles, though, crowd, texts, Hebrew, arrows,
+Nearest to It: variations, move, francium, bad, creatures, tendencies, allow, reached,
+Nearest to ": comprising, files, story, one-third, thinking, attacked, vertebrates, setting,
+Nearest to one: run, traveled, visual, burned, tongue, become, markets, rural,
+Average loss at step  7600 :  5.28268882513
+Average loss at step  7700 :  5.45610201836
+Average loss at step  7800 :  5.40876000404
+Average loss at step  7900 :  5.42615847111
+Average loss at step  8000 :  5.3520949173
+Nearest to been: whom, Pure, An, feminist, will, smooth, indeed, magnesium,
+Nearest to where: hundreds, stable, attraction, Lee, sovereign, governors, Brønsted, Key,
+Nearest to also: makes, produce, continued, often, pigs, imagery, reversed, hold,
+Nearest to was: is, had, tells, generate, mouths, Trail, charitable, 58,
+Nearest to were: conclusion, kind, hex, leaving, DNA, lives, Air, Frank,
+Nearest to about: grown, song, world, either, blind, Bishop, various, foundation,
+Nearest to them: chose, origin, lines, Delos, lighter, young, Alexander, shadow,
+Nearest to Alabama: No, animals, fly, recording, level, bone, ideology, anterior,
+Nearest to these: victory, lower, Australia, reduction, Bill, effective, punishment, course,
+Nearest to form: Andorran, tail, Barbara, applied, continental, winner, longer, headed,
+Nearest to but: film, displayed, guided, 400, plant, circa, squares, ceremony,
+Nearest to from: Benjamin, legislature, any, countries, for, Hence, religious, All,
+Nearest to as: Special, guided, though, titles, crowd, and, texts, Hebrew,
+Nearest to It: variations, move, francium, bad, tendencies, creatures, allow, reached,
+Nearest to ": files, comprising, story, thinking, attacked, one-third, vertebrates, setting,
+Nearest to one: run, visual, traveled, burned, tongue, become, markets, rural,
+Average loss at step  8100 :  5.39609480858
+Average loss at step  8200 :  5.40309296131
+Average loss at step  8300 :  5.26236402035
+Average loss at step  8400 :  5.14961298466
+Average loss at step  8500 :  5.12430553436
+Nearest to been: whom, Pure, An, feminist, smooth, will, indeed, magnesium,
+Nearest to where: hundreds, stable, attraction, Lee, sovereign, governors, Brønsted, Key,
+Nearest to also: makes, produce, often, continued, pigs, imagery, reversed, hold,
+Nearest to was: is, had, Trail, tells, mouths, retain, generate, charitable,
+Nearest to were: kind, conclusion, hex, leaving, are, DNA, Frank, lives,
+Nearest to about: grown, song, world, blind, either, Bishop, various, digital,
+Nearest to them: chose, lines, origin, Delos, lighter, young, Alexander, shadow,
+Nearest to Alabama: No, animals, fly, recording, level, bone, ideology, anterior,
+Nearest to these: victory, lower, Australia, Bill, reduction, effective, course, punishment,
+Nearest to form: Andorran, tail, Barbara, applied, continental, winner, headed, longer,
+Nearest to but: film, displayed, guided, 400, plant, squares, circa, ceremony,
+Nearest to from: Benjamin, legislature, any, countries, Hence, for, religious, All,
+Nearest to as: Special, guided, though, titles, and, crowd, texts, traditions,
+Nearest to It: variations, move, tendencies, bad, francium, creatures, allow, reached,
+Nearest to ": files, comprising, story, thinking, setting, vertebrates, pKa, attacked,
+Nearest to one: run, visual, traveled, burned, tongue, markets, become, rural,
+Average loss at step  8600 :  5.44696290493
+Average loss at step  8700 :  5.22605872154
+Average loss at step  8800 :  5.3079523325
+Average loss at step  8900 :  4.9100169158
+Average loss at step  9000 :  4.96806441545
+Nearest to been: whom, Pure, An, feminist, smooth, will, be, indeed,
+Nearest to where: hundreds, stable, attraction, Lee, sovereign, governors, Brønsted, own,
+Nearest to also: makes, produce, often, continued, pigs, imagery, hold, reversed,
+Nearest to was: is, had, tells, Trail, retain, mouths, generate, charitable,
+Nearest to were: conclusion, kind, are, leaving, hex, DNA, Frank, lives,
+Nearest to about: grown, song, world, blind, either, Bishop, various, digital,
+Nearest to them: chose, origin, lines, Delos, lighter, young, Alexander, shadow,
+Nearest to Alabama: No, animals, fly, recording, level, bone, ideology, anterior,
+Nearest to these: victory, lower, Australia, reduction, Bill, effective, punishment, availability,
+Nearest to form: Andorran, tail, Barbara, applied, continental, winner, headed, longer,
+Nearest to but: film, displayed, guided, 400, plant, circa, squares, ceremony,
+Nearest to from: Benjamin, legislature, any, countries, religious, Hence, for, All,
+Nearest to as: Special, guided, though, and, crowd, titles, status, Creek,
+Nearest to It: variations, move, tendencies, francium, bad, creatures, allow, reached,
+Nearest to ": comprising, files, thinking, story, setting, vertebrates, attacked, pKa,
+Nearest to one: run, visual, traveled, burned, tongue, markets, become, Huxley,
+Average loss at step  9100 :  5.23669617653
+Average loss at step  9200 :  5.23754267216
+Average loss at step  9300 :  5.30736485481
+Average loss at step  9400 :  5.27600327492
+Average loss at step  9500 :  5.2527682209
+Nearest to been: whom, Pure, An, be, will, feminist, smooth, indeed,
+Nearest to where: hundreds, stable, attraction, Lee, sovereign, governors, Brønsted, Key,
+Nearest to also: makes, produce, often, continued, pigs, imagery, hold, reversed,
+Nearest to was: is, had, Trail, tells, retain, mouths, generate, decades,
+Nearest to were: are, conclusion, kind, leaving, hex, DNA, been, Air,
+Nearest to about: grown, song, world, blind, either, Bishop, various, best,
+Nearest to them: chose, origin, lines, Delos, lighter, young, Alexander, shadow,
+Nearest to Alabama: No, animals, fly, recording, level, bone, ideology, anterior,
+Nearest to these: victory, lower, Australia, Bill, reduction, effective, punishment, availability,
+Nearest to form: Andorran, tail, Barbara, applied, continental, winner, outside, headed,
+Nearest to but: film, displayed, guided, 400, plant, circa, squares, addressed,
+Nearest to from: Benjamin, legislature, any, countries, Hence, religious, for, All,
+Nearest to as: Special, guided, though, crowd, titles, Creek, status, texts,
+Nearest to It: variations, move, tendencies, bad, creatures, francium, allow, This,
+Nearest to ": comprising, files, thinking, story, attacked, setting, pKa, vertebrates,
+Nearest to one: run, visual, traveled, burned, tongue, markets, become, Huxley,
+Average loss at step  9600 :  5.25820608616
+Average loss at step  9700 :  5.34852351189
+Average loss at step  9800 :  5.43696550369
+Average loss at step  9900 :  5.37404325485
+Average loss at step  10000 :  5.33349477768
+Nearest to been: whom, Pure, An, be, will, feminist, smooth, indeed,
+Nearest to where: hundreds, stable, attraction, sovereign, Lee, governors, Brønsted, Key,
+Nearest to also: makes, produce, often, continued, pigs, imagery, reversed, hold,
+Nearest to was: is, had, tells, Trail, mouths, retain, generate, decades,
+Nearest to were: conclusion, are, kind, hex, leaving, DNA, Frank, Air,
+Nearest to about: grown, song, world, blind, either, various, Bishop, digital,
+Nearest to them: chose, origin, lines, Delos, lighter, young, Alexander, shadow,
+Nearest to Alabama: No, animals, fly, recording, level, bone, ideology, anterior,
+Nearest to these: victory, lower, Australia, Bill, reduction, effective, punishment, availability,
+Nearest to form: Andorran, tail, Barbara, applied, continental, winner, centers, headed,
+Nearest to but: film, displayed, guided, 400, plant, circa, squares, ceremony,
+Nearest to from: Benjamin, legislature, any, religious, countries, Hence, All, for,
+Nearest to as: Special, guided, though, titles, crowd, Creek, traditions, texts,
+Nearest to It: variations, move, tendencies, creatures, bad, francium, allow, This,
+Nearest to ": comprising, files, story, thinking, attacked, setting, vertebrates, pKa,
+Nearest to one: run, visual, traveled, burned, tongue, markets, Huxley, become,
+Softmax method took 1461.520475 seconds to run 10000 iterations
