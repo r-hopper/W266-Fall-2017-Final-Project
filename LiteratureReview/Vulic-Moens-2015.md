@@ -5,7 +5,7 @@
   * Retain only nouns that appear >4 times in the corpus
   * Use TreeTagger for POS tagging and lemmatization
 * For a pair of aligned documents in a source and target language
-  * The goal is to learn word embeddings for all words in both $V^{S}$ and $V^{T}$ such that the embeddings are semantically coherent and closely aligned over languages in a **single** embedding space
+  * The goal is to learn word embeddings for all words in both $$V^{S}$$ and $$V^{T}$$ such that the embeddings are semantically coherent and closely aligned over languages in a **single** embedding space
   * Merge two such aligned documents to form a single "pseudo-bilingual" document
     * Randomly shuffle the pseudo-bilingual document, to ensure that each word obtains surrounding context words from both languages
     * **The logic behind this leads to the conclusion that a larger context window size will lead to better embeddings**
@@ -18,5 +18,5 @@
     * maximum window size={4, 8, 12,...,60}
   * Use cosine similarity for BLI task  
 * Evaluate on 1000 "ground truth" one-to-one translation pairs for the three languages
-  * Lexicon quality is best reflected in the $Acc_{1}$ score: the number of source language words from ground truth translation pairs for which the top-ranked word cross-lingually is the correct translation
+  * Lexicon quality is best reflected in the $$Acc_{1}$$ score: the number of source language words from ground truth translation pairs for which the top-ranked word cross-lingually is the correct translation
   * Top words for monolingual similarity, cross-lingual similarity, and bilingual similarity are tested for a target word
