@@ -4,7 +4,7 @@
     * For Dutch-English and Spanish-English, we randomly sampled a set of Dutch (Spanish) nouns from our Wikipedia corpora.
     * Following that, we used the Google Translate tool plus an additional annotator to translate those words to English. 
       * The annotator manually revised the lists and retained only words that have their corresponding translation in the English vocabulary.
-      * Additionally, only one possible translation was annotated as correct. When more than 1 translation is possible, the annotator marked as correct the translation that occurs more frequently in the English Wikipedia data. Finally, we built a set of 1000 one-to-one translation pairs for Dutch-English and Spanish-English. The same procedure was followed for Italian-English, but there we obtained the ground truth one-to-one translation pairs for 1000 most frequent Italian nouns in order to test the effect of word frequency on the quality of semantic word responses and the overall lexicon quality.
+      * Additionally, only one possible translation was annotated as correct. When more than 1 translation is possible, the annotator marked as correct the translation that occurs more frequently in the English Wikipedia data. Finally, we built a set of 1000 one-to-one translation pairs for Dutch-English and Spanish-English. The same procedure was followed for Italian-English, but there we obtained the ground truth one-to-one translation pairs for 1000 most frequent Italian nouns in order to test the effect of word frequency on the quality of semantic word responses and the overall lexicon quality."
       
       
 
