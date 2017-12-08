@@ -12,6 +12,7 @@ Compiling resources for baseline models cited in "Learning Crosslingual Word Emb
   * [Wijaya U Penn Bilingual Lexicon Induction](http://www.cis.upenn.edu/~derry/translations.html)
     * Raw BLI data in several languages
   * [Facebook Multilingual Unsupervised and Supervised Embeddings](https://github.com/facebookresearch/MUSE)
+    * Ground truth bilingual dictionaries as .txt format
 
 **Klementiev (2012): [Inducing Crosslingual Distributed Representations of Words](http://www.aclweb.org/anthology/C12-1089); [GitHub Implementation](https://github.com/lmthang/bivec)**
   * The README for this GitHub refers to this paper and mentions that the repo can be obtained from the authors
