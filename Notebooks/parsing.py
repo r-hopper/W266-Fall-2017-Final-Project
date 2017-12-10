@@ -22,6 +22,9 @@ class Corpus(object):
     Init Args:
         path - (str) filepath of the raw data
         lang - (str) optional language prefix to prepend when reading
+    Methods:
+        gen_tokens - generator factory for tokens in order
+        gen_sentences - generator factory for sentences in order
     """
     
     def __init__(self, path, lang = ''):
