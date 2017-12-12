@@ -22,24 +22,24 @@ _fill in smth. here before sharing this repo with others_
 * Evaluate all 3 models on the BLI
 * Write the Bilingual Induction task Evaluation Code
 * Create a third model that uses context to pick the word to substitute on
-> NOTE: ask Melody/James whether our interpretations make sense? In what sense is this "EM"?
+  > NOTE: ask Melody/James whether our interpretations make sense? In what sense is this "EM"?
 * Create a second model with probabilistic word substitution
 * NOTE: this is just a matter of writting the code to count and store word frequencies then plug it into model1
 * Create a first model with random word substitution (Maya)
-> UPDATE 12/12: I'm close... see [model1.py](./Notebooks/model1.py)
+  > UPDATE 12/12: I'm close... see [model1.py](./Notebooks/model1.py)
 * Figure out the BLI task from Vulic & Moens (Roseanna)
-> UPDATE 12/10: Got data from Vulic for 3 languages, still need to write up the code to calculate accuracy/recall.
+  > UPDATE 12/10: Got data from Vulic for 3 languages, still need to write up the code to calculate accuracy/recall.
 * Create DataParsing Functions
-> UPDATE 12/12: Mostly done, see [parsing.py](./Notebooks/parsing.py) for `Corpus()` and `Vocabulary()` classes plus lazy batch generator for CBOW training.
->> NEXT STEPS: Still having trouble initializing a `Vocabulary` from the full English Wiki data. Maybe an alternative strategy would be to strip the English sentences from Duong et Al's Italian-English raw data & just train with that?
+  > UPDATE 12/12: Mostly done, see [parsing.py](./Notebooks/parsing.py) for `Corpus()` and `Vocabulary()` classes plus lazy batch generator for CBOW training.
+  >> NEXT STEPS: Still having trouble initializing a `Vocabulary` from the full English Wiki data. Maybe an alternative strategy would be to strip the English sentences from Duong et Al's Italian-English raw data & just train with that?
 * Work through [Word2Vec in TensorFlow Tutorial] & modify it to CBOW (Mona)
-> DONE 12/10: See (./Notebooks/Word2Vec_Tutorial_Notes.ipynb) and (./Notebooks/CBOW_implementation.ipynb)
+  > DONE 12/10: See (./Notebooks/Word2Vec_Tutorial_Notes.ipynb) and (./Notebooks/CBOW_implementation.ipynb)
 * Load Raw Data into G Cloud Instance (Maya)
-> UPDATE 11/30: Done. See `/home/mmillervedam/Data` on the shared instance.
+  > UPDATE 11/30: Done. See `/home/mmillervedam/Data` on the shared instance.
 * Get C code running (Mona)
-> UPDATE 11/28: Compiled & running but direct conversion to Python does not seem like a good approach. Alternative options are to run the C code in python using a wrapper like in [this Word2Vec implementation](https://github.com/danielfrg/word2vec/blob/master/setup.py) or rebuild from scratch following Word2Vec code itself.
+  > UPDATE 11/28: Compiled & running but direct conversion to Python does not seem like a good approach. Alternative options are to run the C code in python using a wrapper like in [this Word2Vec implementation](https://github.com/danielfrg/word2vec/blob/master/setup.py) or rebuild from scratch following Word2Vec code itself.
 * Make a G-cloud instance we can all access (Maya)
-> DONE 11/30: You should be able to ssh in using `gcloud compute --project "synthetic-arc-178620" ssh --zone "us-west1-b" "finalproject" --ssh-flag "-L 8888:127.0.0.1:8888" --ssh-flag  "-L 6006:127.0.0.1:6006"`
+  > DONE 11/30: You should be able to ssh in using `gcloud compute --project "synthetic-arc-178620" ssh --zone "us-west1-b" "finalproject" --ssh-flag "-L 8888:127.0.0.1:8888" --ssh-flag  "-L 6006:127.0.0.1:6006"`
 * Literature Review about Crosslingual Word Embeddings(all)
   > ONGOING: see [Literature Review](./LiteratureReview) folder above.
 * Draft Milestone due Nov 16 (Maya)
