@@ -79,18 +79,19 @@ class SubstitutionModel(object):
                          # get the rest of the code running, but eventually
                          # this should be inferred dynamically from the input
                          # shape as in a4.
-        skip_window = 2  # TODO : ditto
+        window = 2  # TODO : ditto
 
         # Data Placeholders
-        self.inputs_ = tf.placeholder(tf.int32, shape=[batch_size])
-        self.context_ = tf.placeholder(tf.int32, shape=[batch_size, 1])
+        self.context_ = tf.placeholder(tf.int32, shape=[batch_size, window*2])
+        self.centerword_ = tf.placeholder(tf.int32, shape=[batch_size, 1])
 
         # Embedding Layer
         with tf.variable_scope("Embedding_Layer"):
             self.embeddings_ = tf.Variable(tf.random_uniform([self.V, self.H],
                                             -1.0, 1.0), name='Embeddings')
-            self.embed_ = tf.nn.embedding_lookup(self.embeddings_, self.inputs_)
-            self.reduced_embed = tf.div(tf.reduce_sum(embed, 1), skip_window*2)
+            self.embed_ = tf.nn.embedding_lookup(self.embeddings_,
+                                                 self.context_)
+            self.reduced_embed_ = tf.div(tf.reduce_sum(embed, 1), window*2)
             # Normalized Embeddings facillitate cosine similarity calculation
             # .... but don't train on these! they're just for evaluation!
             self.norm_ = tf.sqrt(tf.reduce_sum(tf.square(self.embeddings_), 1, keep_dims=True))
@@ -101,17 +102,18 @@ class SubstitutionModel(object):
             self.W_ = tf.Variable(tf.truncated_normal([self.V, self.H],
                                   stddev=1.0 / math.sqrt(self.H)), name = 'W')
             self.b_ = tf.Variable(tf.zeros([self.V,], dtype = tf.float32), name = 'b')
-            self.logits_ = tf.matmul(self.embed_, tf.transpose(self.W_)) + self.b_
+            self.logits_ = tf.matmul(self.reduced_embed_,
+                                     tf.transpose(self.W_)) + self.b_
 
     @with_self_graph
     def BuildTrainingGraph(self):
         with tf.variable_scope("Training"):
-            nce_args = dict(weights=self.W_,
-                            biases=self.b_,
-                            labels=self.context_,
-                            inputs=self.embed_,
-                            num_sampled=self.softmax_ns,
-                            num_classes=self.V)
+            ssfmx_args = dict(weights=self.W_,
+                              biases=self.b_,
+                              labels=self.context_,
+                              inputs=self.reduced_embed_,
+                              num_sampled=self.softmax_ns,
+                              num_classes=self.V)
             self.nce_loss_ = tf.reduce_mean(tf.nn.nce_loss(**nce_args))
             self.optimizer_ = tf.train.GradientDescentOptimizer(self.alpha)
             self.train_step_ = self.optimizer_.minimize(self.nce_loss_)
