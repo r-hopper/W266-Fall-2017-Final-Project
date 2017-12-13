@@ -18,7 +18,7 @@ import numpy as np
 class Corpus(object):
     """
     Class with helper methods to read from a Corpus.
-    Intended to facillitate working with multiple corpora at once.
+    Intended to facilitate working with multiple corpora at once.
     Init Args:
         path - (str) filepath of the raw data
         lang - (str) optional language prefix to prepend when reading
