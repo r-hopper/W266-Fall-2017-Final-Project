@@ -24,12 +24,12 @@ _fill in smth. here before sharing this repo with others_
 * Create a third model that uses context to pick the word to substitute on
   > NOTE: ask Melody/James whether our interpretations make sense? In what sense is this "EM"?
 * Create a second model with probabilistic word substitution
-* NOTE: this is just a matter of writting the code to count and store word frequencies then plug it into model1
+  > NOTE: this is just a matter of writting the code to count and store word frequencies then plug it into model1
 * Create a first model with random word substitution (Maya)
   > UPDATE 12/12: I'm close... see [model1.py](./Notebooks/model1.py)
 * Figure out the BLI task from Vulic & Moens (Roseanna)
   > UPDATE 12/10: Got data from Vulic for 3 languages, still need to write up the code to calculate accuracy/recall.
-* Create DataParsing Functions
+* Create DataParsing Functions (Maya)
   > UPDATE 12/12: Mostly done, see [parsing.py](./Notebooks/parsing.py) for `Corpus()` and `Vocabulary()` classes plus lazy batch generator for CBOW training.
   >> NEXT STEPS: Still having trouble initializing a `Vocabulary` from the full English Wiki data. Maybe an alternative strategy would be to strip the English sentences from Duong et Al's Italian-English raw data & just train with that?
 * Work through [Word2Vec in TensorFlow Tutorial] & modify it to CBOW (Mona)
