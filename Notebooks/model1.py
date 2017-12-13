@@ -3,13 +3,16 @@
 Word2Vec with CBOW model that replaces centerword with
 a randomly chosen translation from a provided dictionary.
 
-INSPIRED BY: Duong, Long & Kanayama, Hiroshi & Ma, Tengfei & Bird,
+INSPIRED BY:
+    Duong, Long & Kanayama, Hiroshi & Ma, Tengfei & Bird,
     Steven & Cohn, Trevor. (2016). Learning Crosslingual Word
     Embeddings without Bilingual Corpora. 1285-1295. 10.18653/
     v1/D16-1136.
 
-ADAPTED FROM: https://github.com/tensorflow/tensorflow/blob/r1.2/
+ADAPTED FROM:
+    https://github.com/tensorflow/tensorflow/blob/r1.2/
     tensorflow/examples/tutorials/word2vec/word2vec_basic.py
+AND: code provided as part of MIDS w266 assignment 4.
 """
 
 from __future__ import print_function
@@ -20,24 +23,26 @@ import numpy as np
 from sklearn.manifold import TSNE
 
 
-class SubstitutionModel(object):
-    """
-    Single Layer Neural Net to Learn Crosslingual Word Embeddings.
+# Helper function
+def with_self_graph(function):
+    """Decorator-foo borrowed from w266 a4."""
+    def wrapper(self, *args, **kwargs):
+        with self.graph.as_default():
+            return function(self, *args, **kwargs)
+    return wrapper
 
-    Init Args:
-                V   - (int) vocabulary size
-                H   - (int) embedding size
-        softmax_ns  - (int, default = 64) number of samples for softmax
-            graph   - (optional) tf.Graph() instance
-        learning_rate (float, default = 1.0)
+
+# Model 1
+class BiW2V(object):
+    """
+    Bilingual Word2Vec.
 
     Methods:
         self.BuildCoreGraph()
-        self.BuildTrainingGraph()
+        self.BuildTrainingGraph(loss = 'sampled_softmax')
         self.BuildValidationGraph()
-        self.
+        self.learn_embeddings(num_steps, batch_fxn, data, index, verbose=True)
     """
-
 
     def __init__(self, graph=None, *args, **kwargs):
         """
@@ -49,31 +54,39 @@ class SubstitutionModel(object):
         Kwargs:
           softmax_ns = 64  (number of negative samples)
           alpha = 1.0  (learning rate)
-          examples = np.array of 5 top 100 words for validation
+          examples = np.array of words for validation (optional)
         """
         # Set TensorFlow graph. All TF code will work on this graph.
         self.graph = graph or tf.Graph()
         self.SetParams(*args, **kwargs)
 
     @with_self_graph # TODO : remove this unless we plan to init as tf.const
-    def SetParams(self, V, H, softmax_ns=64, learning_rate=1.0):
+    def SetParams(self, V, H, softmax_ns=64, alpha=1.0, examples = None):
         # Model structure.
         self.V = V
         self.H = H
-
         # Training hyperparameters
         self.softmax_ns = softmax_ns
-        self.alpha = learning_rate
-
+        self.alpha = alpha
         # Words for validation
-        self.examples = np.random.choice(100, 10, replace=False)
-
+        if examples is not None:
+            self.examples = examples
+        else:
+            self.examples = np.random.choice(100, 10, replace=False)
         # Results
         self.epochs_trained = 0
         self.final_embeddings = None
 
     @with_self_graph
     def BuildCoreGraph(self):
+        """
+        CBOW training model creates a reduced representation of
+        the context window then passes it through an affine layer
+        and into a softmax to predict the center word. In the
+        bilingual version we instead predict a translation of the
+        centerword (Note: our embedding matrix represents the
+        concatenated vocabularies of both source & target languages)
+        """
 
         batch_size = 128 # TODO : I've hard coded this for now b/c I want to
                          # get the rest of the code running, but eventually
@@ -91,7 +104,8 @@ class SubstitutionModel(object):
                                             -1.0, 1.0), name='Embeddings')
             self.embed_ = tf.nn.embedding_lookup(self.embeddings_,
                                                  self.context_)
-            self.reduced_embed_ = tf.div(tf.reduce_sum(embed, 1), window*2)
+            self.reduced_embed_ = tf.div(tf.reduce_sum(self.embed_, 1),
+                                         window*2)
             # Normalized Embeddings facillitate cosine similarity calculation
             # .... but don't train on these! they're just for evaluation!
             self.norm_ = tf.sqrt(tf.reduce_sum(tf.square(self.embeddings_), 1, keep_dims=True))
@@ -106,17 +120,26 @@ class SubstitutionModel(object):
                                      tf.transpose(self.W_)) + self.b_
 
     @with_self_graph
-    def BuildTrainingGraph(self):
+    def BuildTrainingGraph(self, loss_fxn = 'sampled_softmax'):
+        """
+        Train Weights and Embedding Matrix.
+        Arg (optional):
+            loss_fxn -  sampled_softmax(default) else NCE loss
+        """
         with tf.variable_scope("Training"):
-            ssfmx_args = dict(weights=self.W_,
-                              biases=self.b_,
-                              labels=self.context_,
-                              inputs=self.reduced_embed_,
-                              num_sampled=self.softmax_ns,
-                              num_classes=self.V)
-            self.nce_loss_ = tf.reduce_mean(tf.nn.nce_loss(**nce_args))
+            args = dict(weights=self.W_,
+                        biases=self.b_,
+                        inputs=self.reduced_embed_,
+                        labels=self.centerword_,
+                        num_sampled=self.softmax_ns,
+                        num_classes=self.V)
+            if loss_fxn == 'sampled_softmax':
+                self.loss_ = tf.reduce_mean(tf.nn.sampled_softmax_loss(**args))
+            else:
+                self.loss_ = tf.reduce_mean(tf.nn.sampled_softmax_loss(**args))
+
             self.optimizer_ = tf.train.GradientDescentOptimizer(self.alpha)
-            self.train_step_ = self.optimizer_.minimize(self.nce_loss_)
+            self.train_step_ = self.optimizer_.minimize(self.loss_)
 
 
     @with_self_graph
@@ -128,7 +151,7 @@ class SubstitutionModel(object):
                                     self.normalized_embeddings_,
                                     transpose_b=True)
 
-    def learn_embeddings(self, num_steps, batch_fxn, data, index, verbose=True):
+    def learn_embeddings(self, num_steps, batch_generator, index, verbose=True):
         """
         Runs a specified number of training steps.
         NOTE: right now the batch fxn is hard coded with inputs:

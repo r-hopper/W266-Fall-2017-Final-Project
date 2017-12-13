@@ -26,13 +26,13 @@ class Corpus(object):
         gen_tokens - generator factory for tokens in order
         gen_sentences - generator factory for sentences in order
     """
-    
+
     def __init__(self, path, lang = ''):
         err_msg = "ERROR: corpus filepath not valid"
-        assert os.path.isfile(path), err_msg
+        #assert os.path.isfile(path), err_msg
         self.path = path
         self.lang = lang
-        
+
     def gen_tokens(self):
         """Return a generator of tokens."""
         for line in open(self.path, 'rb'):
@@ -53,7 +53,7 @@ class Vocabulary(object):
         wordset   - (optional) limit vocabulary to these words
         size      - (optional) integer, number of vocabulary words
     Attributes:
-        self.index   - dictionary of {id : type} 
+        self.index   - dictionary of {id : type}
         self.size    - integer, number of words in total
         self.types   - dictionary of {type : id}
         self.wordset - set of types
@@ -62,7 +62,7 @@ class Vocabulary(object):
         self.to_words(ids) - returns list of words for the id list
         self.sentence_to_ids(sentence) - returns list of ids with start & end
     """
-    
+
     START_TOKEN = "<s>"
     END_TOKEN = "</s>"
     UNK_TOKEN = "<unk>"
@@ -93,27 +93,27 @@ class Vocabulary(object):
         return [self.index.get(i, self.UNK_TOKEN) for i in ids]
 
     def sentence_to_ids(self, sentence):
-        return [self.START_ID] + self.to_ids(sentence.split()) + [self.END_ID]    
-    
+        return [self.START_ID] + self.to_ids(sentence.split()) + [self.END_ID]
+
 
 def batch_generator(corpus, vocabulary, batch_size, bag_window, max_epochs = None):
     """
     Function to iterate repeated over a corpus delivering
     batch_size arrays of ids and context_labels for CBOW.
-    
+
     Args:
         corpus - an instance of Corpus()
         vocabulary - an instance of Vocabulary()
         batch_size - int, number of words to serve at once
         bag_window - context distance for CBOW training
         max_epochs - int(default = None) stop generating
-        
+
     Yields:
-        batch: np.array of dim: (batch_size, 2*bag_window - 1)
+        batch: np.array of dim: (batch_size, 2*bag_window)
                Represents set of context words.
         labels: np.array of dim: (batch_size, 1)
                Represents center words to predict/translate.
-        
+
     WARNING: this generator will go on ad infinitum unless
     you specify max_epochs or explicitly break.
     """
@@ -121,7 +121,7 @@ def batch_generator(corpus, vocabulary, batch_size, bag_window, max_epochs = Non
     span = 2 * bag_window + 1 # context size
     batch = [] # context lists of len span - 1
     labels = [] # center words
-    
+
     # loop through corpus sentences
     data_generator = corpus.gen_sentences()
     ids = collections.deque()
@@ -132,22 +132,22 @@ def batch_generator(corpus, vocabulary, batch_size, bag_window, max_epochs = Non
         except StopIteration: # or reload corpus
             if nEpochs < max_epochs or max_epochs is None:
                 nEpochs += 1
-                data_generator = corpus.gen_sentences() 
+                data_generator = corpus.gen_sentences()
                 sentence = next(data_generator)
             else:
                 print("... ERROR: Max Epochs (%s) Reached." % max_epochs)
                 break
-        
+
         # get the ids & their contexts
         tokens = vocabulary.sentence_to_ids(sentence)
         ids.extend(tokens[1:-1])
         contexts.extend([tokens[i - bag_window : i] +
                          tokens[i + 1 : i + bag_window + 1]
                          for i in range(1, len(tokens)-1)])
-        
+
         # emit a batch if you can
         err_msg = "... ERROR: ids/context length mismatch"
-        assert len(ids) == len(contexts), err_msg
+        #assert len(ids) == len(contexts), err_msg
         while len(ids) >=  batch_size:
             batch = [contexts.popleft() for _ in range(batch_size)]
             labels = [ids.popleft() for _ in range(batch_size)]
