@@ -29,7 +29,7 @@ class Corpus(object):
 
     def __init__(self, path, lang = ''):
         err_msg = "ERROR: corpus filepath not valid"
-        #assert os.path.isfile(path), err_msg
+        assert os.path.isfile(path), err_msg
         self.path = path
         self.lang = lang
 
@@ -147,7 +147,7 @@ def batch_generator(corpus, vocabulary, batch_size, bag_window, max_epochs = Non
 
         # emit a batch if you can
         err_msg = "... ERROR: ids/context length mismatch"
-        #assert len(ids) == len(contexts), err_msg
+        assert len(ids) == len(contexts), err_msg
         while len(ids) >=  batch_size:
             batch = [contexts.popleft() for _ in range(batch_size)]
             labels = [ids.popleft() for _ in range(batch_size)]

@@ -18,6 +18,7 @@ AND: code provided as part of MIDS w266 assignment 4.
 from __future__ import print_function
 import os
 import re
+import types
 import collections
 import numpy as np
 from sklearn.manifold import TSNE
@@ -48,34 +49,29 @@ class BiW2V(object):
         """
         Initialize TensorFlow Neural Net Model.
         Args:
-          V: vocabulary size
-          H: embedding size
-
-        Kwargs:
-          softmax_ns = 64  (number of negative samples)
-          alpha = 1.0  (learning rate)
-          examples = np.array of words for validation (optional)
+          index - vocabulary dict of {idx : word}.
+          H     - embedding size, an int.
         """
         # Set TensorFlow graph. All TF code will work on this graph.
         self.graph = graph or tf.Graph()
         self.SetParams(*args, **kwargs)
 
-    @with_self_graph # TODO : remove this unless we plan to init as tf.const
-    def SetParams(self, V, H, softmax_ns=64, alpha=1.0, examples = None):
+    @with_self_graph
+    def SetParams(self, index, H):
         # Model structure.
-        self.V = V
+        self.index = index # NOTE: row idx ~ rank w/in monolingual corpus
+        self.V = len(index)
         self.H = H
-        # Training hyperparameters
-        self.softmax_ns = softmax_ns
-        self.alpha = alpha
-        # Words for validation
-        if examples is not None:
-            self.examples = examples
-        else:
-            self.examples = np.random.choice(100, 10, replace=False)
-        # Results
-        self.epochs_trained = 0
-        self.final_embeddings = None
+
+        # Hyperparameters & Validation Examples
+        with tf.variable_scope("Training_Parameters"):
+            self.softmax_ns_ = tf.placeholder_with_default(64, [], name = 'ns')
+            self.learning_rate_ = tf.placeholder_with_default(1.0, [],
+                                                    name = 'learning_rate')
+
+        # Results (parameters retrieved after training)
+        self.context_embeddings = None
+        self.word_embeddings = None
 
     @with_self_graph
     def BuildCoreGraph(self):
@@ -83,84 +79,130 @@ class BiW2V(object):
         CBOW training model creates a reduced representation of
         the context window then passes it through an affine layer
         and into a softmax to predict the center word. In the
-        bilingual version we instead predict a translation of the
-        centerword (Note: our embedding matrix represents the
+        bilingual version we additionally predict a translation of
+        the centerword (Note: our embedding matrix represents the
         concatenated vocabularies of both source & target languages)
         """
 
-        batch_size = 128 # TODO : I've hard coded this for now b/c I want to
-                         # get the rest of the code running, but eventually
-                         # this should be inferred dynamically from the input
-                         # shape as in a4.
-        window = 2  # TODO : ditto
-
-        # Data Placeholders
-        self.context_ = tf.placeholder(tf.int32, shape=[batch_size, window*2])
-        self.centerword_ = tf.placeholder(tf.int32, shape=[batch_size, 1])
+        # Data Placeholders (note these will all be in batches)
+        self.context_ = tf.placeholder(tf.int32, shape=[None, None])
+        self.centerword_ = tf.placeholder(tf.int32, shape=[None, 1])
+        self.translation_ = tf.placeholder(tf.int32, shape=[None, 1])
 
         # Embedding Layer
         with tf.variable_scope("Embedding_Layer"):
-            self.embeddings_ = tf.Variable(tf.random_uniform([self.V, self.H],
-                                            -1.0, 1.0), name='Embeddings')
-            self.embed_ = tf.nn.embedding_lookup(self.embeddings_,
-                                                 self.context_)
-            self.reduced_embed_ = tf.div(tf.reduce_sum(self.embed_, 1),
-                                         window*2)
-            # Normalized Embeddings facillitate cosine similarity calculation
-            # .... but don't train on these! they're just for evaluation!
-            self.norm_ = tf.sqrt(tf.reduce_sum(tf.square(self.embeddings_), 1, keep_dims=True))
-            self.normalized_embeddings_ = self.embeddings_ / self.norm_
+            # Random initialization NOTE: self.C_ is Duong's 'V'
+            self.C_ = tf.Variable(tf.random_uniform([self.V, self.H],-1.0,1.0),
+                                  name = 'ContextEmbeddings')
+
+            # Input for hidden layer NOTE: self.input_ is Duong's 'h'
+            embed = tf.nn.embedding_lookup(self.C_, self.context_)
+            self.input_ = tf.div(tf.reduce_sum(embed, 1), tf.shape(embed)[0])
+
 
         # Hidden Layer
         with tf.variable_scope("Hidden_Layer"):
+            # Random initialization NOTE: self.W_ is Duong's 'U'
             self.W_ = tf.Variable(tf.truncated_normal([self.V, self.H],
-                                  stddev=1.0 / math.sqrt(self.H)), name = 'W')
-            self.b_ = tf.Variable(tf.zeros([self.V,], dtype = tf.float32), name = 'b')
-            self.logits_ = tf.matmul(self.reduced_embed_,
-                                     tf.transpose(self.W_)) + self.b_
+                                  stddev=1.0 / math.sqrt(self.H)),
+                                  name = 'WordEmbeddings')
+            self.b_ =tf.Variable(tf.zeros([self.V,],dtype=tf.float32), name='b')
+            # hidden layer output = softmax input
+            self.logits_ = tf.matmul(self.input_,tf.transpose(self.W_))+self.b_
+
+        # No output layer because we don't intend to use this model, we just
+        # want access to its parameters to use as features for other models.
 
     @with_self_graph
-    def BuildTrainingGraph(self, loss_fxn = 'sampled_softmax'):
+    def BuildTrainingGraph(self):
         """
-        Train Weights and Embedding Matrix.
-        Arg (optional):
-            loss_fxn -  sampled_softmax(default) else NCE loss
+        Train Word & Context Embeddings (Duong's V and U) using
+        Sampled Softmax to jointly optimize the probabilities of
+        predicting the centerword & predicting its translation.
         """
         with tf.variable_scope("Training"):
-            args = dict(weights=self.W_,
-                        biases=self.b_,
-                        inputs=self.reduced_embed_,
-                        labels=self.centerword_,
-                        num_sampled=self.softmax_ns,
-                        num_classes=self.V)
-            if loss_fxn == 'sampled_softmax':
-                self.loss_ = tf.reduce_mean(tf.nn.sampled_softmax_loss(**args))
-            else:
-                self.loss_ = tf.reduce_mean(tf.nn.sampled_softmax_loss(**args))
+            # softmax for monolingual label
+            mono_args = dict(weights = self.W_,
+                             biases = self.b_,
+                             inputs = self.inputs_,
+                             labels = self.centerword_,
+                             num_sampled = self.softmax_ns_,
+                             num_classes = self.V)
+            mono = tf.reduce_mean(tf.nn.sampled_softmax_loss(**mono_args))
+            # softmax for crosslingual label
+            target_args = copy(source_args)
+            target_args[labels] = self.translation_
+            cross = tf.reduce_mean(tf.nn.sampled_softmax_loss(**targetargs))
 
-            self.optimizer_ = tf.train.GradientDescentOptimizer(self.alpha)
-            self.train_step_ = self.optimizer_.minimize(self.loss_)
+            # loss function is their sum # TODO add regularizer
+            # TODO: check if there is a way to pass 2 labels to tf.sftmx
+            self.loss_ = mono + cross
+            optimizer = tf.train.GradientDescentOptimizer(self.learning_rate_)
+            self.train_step_ = optimizer.minimize(self.loss_)
 
 
     @with_self_graph
     def BuildValidationGraph(self):
-        self.test_ = tf.constant(self.examples, dtype=tf.int32)
-        self.test_embed_ = tf.nn.embedding_lookup(self.normalized_embeddings_,
-                                                  self.test_)
-        self.similarity = tf.matmul(self.test_embed_,
-                                    self.normalized_embeddings_,
-                                    transpose_b=True)
-
-    def learn_embeddings(self, num_steps, batch_generator, index, verbose=True):
         """
-        Runs a specified number of training steps.
-        NOTE: right now the batch fxn is hard coded with inputs:
-                  (data,batch_size=128,num_skips=2,skip_window=2)
-              It should output two arrays representing the input &
-              context indices for a single batch.
-              TODO: replace this with something less clunky!
+        Use cosine similarity to retrieve words with
+        similar context or word embeddings.
+        """
+        with tf.variable_scope("Validation"):
+            # words to validate
+            self.words_ = tf.placeholder(tf.int32, [], name='ValidationWords')
+
+            # Normalized Embeddings facillitate cosine similarity calculation
+            norm = lambda x: tf.sqrt(tf.reduce_sum(tf.square(x),keep_dims=True))
+            self.context_embeddings_ = self.C_ / norm(self.C_)
+            self.word_embeddings_ = self.C_ / norm(self.W_)
+
+            # TODO: add code here if we want to combine U and V w/ gamma weight
+
+            # Retrieve context & word embeddings for validation words
+            embeded_words = tf.nn.embedding_lookup(self.context_embeddings_,
+                                                   self.words_)
+            self.similarity_ = tf.matmul(embeded_words,
+                                         self.context_embeddings_,
+                                         transpose_b=True)
+
+
+    def translate(self, word_idxs):
+        """
+        Helper method used in training to translate centerwords at runtime.
+        Base Implementation: no traslation, this is a dummy method for later.
+        """
+        return word_idxs
+
+
+    def train(self, nSteps, data, sample = [3,4,5,6,7], verbose = True):
+        """
+        Train the model on the provided data.
+
+        Args:
+            nSteps  - number of training steps, an int.
+            data    - a batch generator that windows over the corpus.
+            sample  - (optional) iterable of word idxs whose neighbors to
+                    display after each training step to track progress.
+            verbose - (optional) boolean to control logging behavior.
+
+        After training, results can be accessed via these class vars:
+                self.final_context_embeddings
+                self.final_word_embeddings
         """
 
+        # perform some checks
+        msg = 'ERROR: Please provide an integer for nSteps'
+        assert type(nSteps) = type(1) and nSteps > 0, msg
+        msg = 'ERROR: data should be a batch generator'
+        assert type(data) =  types.GeneratorType, msg
+        msg = 'ERROR: sample should be a list of word indexes'
+        assert sample is None or type(sample[0]) == type(1), msg
+
+        # set up logging intervals (for verbose training)
+        loss_logging_interval = num_steps // 10
+        sim_logging_interval = num_steps // 5
+
+        # proceed with training
         with tf.Session(graph=self.graph) as session:
 
             # initialize all variables
@@ -171,33 +213,31 @@ class BiW2V(object):
                 for var in tf.trainable_variables():
                     print("\t", var)
 
-            # iterate through specificied number of training steps
+            # train in batches
+            step = 0
             average_loss = 0
-            for step in range(num_steps):
-                # Get the next batch of inputs & their skipgram context
-                batch_inputs, batch_context = batch_fxn(data, 128, 2, 2)
+            for batch, labels in data:
 
                 # Run the train op
-                feed_dict = {self.inputs_: batch_inputs, self.context_: batch_context}
-                _, loss_val = session.run([self.train_step_, self.nce_loss_],
-                                          feed_dict=feed_dict)
+                feed_dict = {self.context_ : batch,
+                             self.centerword_ : labels,
+                             self.words : np.array(sample),
+                             self.translation_ : self.translate(labels)}
+                _, loss_val = session.run([self.train_step_, self.loss_],
+                                          feed_dict = feed_dict)
 
-                # Logging Progress
+                # Log Average Loss
                 average_loss += loss_val
-                loss_logging_interval = num_steps // 10
-                sim_logging_interval = num_steps // 5
-                if not verbose:
-                    continue
-                if step % loss_logging_interval == 0:
-                    if step > 0:
-                        average_loss /= loss_logging_interval
-                    # The average loss is an estimate of the loss over the last 1000 batches.
+                if verbose and step % loss_logging_interval == 0:
+                    average_loss /= loss_logging_interval
                     print('Average loss at step ', step, ': ', average_loss)
                     average_loss = 0
-                if step % sim_logging_interval == 0:
+
+                # Log validation word closest neighbors
+                if verbose and step % sim_logging_interval == 0:
                     sim = self.similarity.eval()
-                    for i in xrange(len(self.examples)):
-                        word = index[self.examples[i]]
+                    for i in xrange(len(sample)):
+                        word = index[sample[i]]
                         top_k = 8  # number of nearest neighbors
                         nearest = (-sim[i, :]).argsort()[1:top_k + 1]
                         log_str = '   Nearest to %s:' % word
@@ -205,29 +245,35 @@ class BiW2V(object):
                             nbr = index[nearest[k]]
                             log_str = '%s %s,' % (log_str, nbr)
                         print(log_str)
-            # results
-            self.epochs_trained = num_steps
-            self.final_embeddings = self.normalized_embeddings_.eval()
-        return self.final_embeddings
 
-    def plot_embeddings_in_2D(self, num, index):
+                # check stopping criteria
+                step += 1
+                if step > nSteps:
+                    break
+
+            # results (extract parameters to class vars)
+            self.context_embeddings = self.context_embeddings_.eval()
+            self.word_embeddings = self.word_embeddings_.eval()
+        return self.context_embeddings, self.word_embeddings
+
+
+    def plot_embeddings_in_2D(self, wordset):
         """
         Plot 2D representation of embeddings.
         Args:
-            num = int (number of examples to plot)
-            index = reverse dictionary of word indices
-            filename = path to save plot
+            wordset - list of words to plot
         """
-        if self.final_embeddings is None:
+        if self.context_embeddings is None:
             print("You must train the embeddings before plotting.")
         else:
             tsne = TSNE(perplexity=30, n_components=2, init='pca', n_iter=5000)
-            low_dim_embs = tsne.fit_transform(self.final_embeddings[:num, :])
-            labels = [index[i] for i in xrange(num)]
+            low_dim_embs = tsne.fit_transform(self.context_embeddings[:num, :])
+            labels = [self.index[i] for i in xrange(num)]
             plt.figure(figsize=(18, 18))  # in inches
             for i, label in enumerate(labels):
                 x, y = low_dim_embs[i, :]
                 plt.scatter(x, y)
-                plt.annotate(str(label), xy=(x, y), xytext=(5, 2),
-                             textcoords='offset points', ha='right', va='bottom')
+                plt.annotate(str(label), xy = (x, y), xytext = (5, 2),
+                             textcoords = 'offset points', ha = 'right',
+                             va = 'bottom')
             plt.show()
