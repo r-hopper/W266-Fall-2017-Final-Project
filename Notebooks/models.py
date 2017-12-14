@@ -88,8 +88,8 @@ class BiW2V(object):
 
         # Data Placeholders (note these will all be in batches)
         self.context_ = tf.placeholder(tf.int32, shape=[None, None])
-        self.centerword_ = tf.placeholder(tf.int32, shape=[None,1])
-        self.translation_ = tf.placeholder(tf.int32, shape=[None,1])
+        self.centerword_ = tf.placeholder(tf.int32, shape=[None,])
+        self.translation_ = tf.placeholder(tf.int32, shape=[None,])
 
         # Embedding Layer
         with tf.variable_scope("Embedding_Layer"):
@@ -124,22 +124,31 @@ class BiW2V(object):
         predicting the centerword & predicting its translation.
         """
         with tf.variable_scope("Training"):
+
+            # print(self.W_.shape)
+            # print(self.b_.shape)
+            # print(self.input_.shape)
+            # print(self.centerword_.shape)
+            # self.labels_ = tf.expand_dims(self.centerword_, axis=1)
+            # print('testing')
+            # print(self.labels_.shape)
+
             # softmax for monolingual label
             mono_args = dict(weights = self.W_,
                              biases = self.b_,
                              inputs = self.input_,
-                             labels = self.centerword_,
+                             labels = tf.expand_dims(self.centerword_, axis=1),
                              num_sampled = self.softmax_ns_,
                              num_classes = self.V)
             mono = tf.reduce_mean(tf.nn.sampled_softmax_loss(**mono_args))
             # softmax for crosslingual label
             cross_args = mono_args.copy()
-            cross_args['labels'] = self.translation_
+            cross_args['labels'] = tf.expand_dims(self.translation_, axis=1)
             cross = tf.reduce_mean(tf.nn.sampled_softmax_loss(**cross_args))
 
             # loss function is their sum # TODO add regularizer
             # TODO: check if there is a way to pass 2 labels to tf.sftmx
-            self.loss_ = mono + cross
+            self.loss_ = mono #+ cross
             optimizer = tf.train.GradientDescentOptimizer(self.learning_rate_)
             self.train_step_ = optimizer.minimize(self.loss_)
 
@@ -152,7 +161,7 @@ class BiW2V(object):
         """
         with tf.variable_scope("Validation"):
             # words to validate
-            self.valid_words_ = tf.placeholder(tf.int32, shape=[None])
+            self.valid_words_ = tf.placeholder(tf.int32, shape=[None,])
 
             # Normalized Embeddings facillitate cosine similarity calculation
             norm = lambda x: tf.sqrt(tf.reduce_sum(tf.square(x),keep_dims=True))
@@ -202,8 +211,8 @@ class BiW2V(object):
         assert sample is None or type(sample[0]) == type(1), msg
 
         # set up logging intervals (for verbose training)
-        loss_logging_interval = nSteps // 10
-        sim_logging_interval = nSteps // 5
+        loss_logging_interval = max( 1, nSteps // 10)
+        sim_logging_interval = max( 1, nSteps // 5)
 
         # proceed with training
         with tf.Session(graph=self.graph) as session:
@@ -230,26 +239,25 @@ class BiW2V(object):
                 _, loss_val = session.run([self.train_step_, self.loss_],
                                           feed_dict = feed_dict)
 
-                verbose= False # FOR DEBUGGING
                 # Log Average Loss
-                # average_loss += loss_val
-                # if verbose and step % loss_logging_interval == 0:
-                #     average_loss /= loss_logging_interval
-                #     print('Average loss at step ', step, ': ', average_loss)
-                #     average_loss = 0
-                #
-                # # Log validation word closest neighbors
-                # if verbose and step % sim_logging_interval == 0:
-                #     sim = self.similarity.eval()
-                #     for i in xrange(len(sample)):
-                #         word = index[sample[i]]
-                #         top_k = 8  # number of nearest neighbors
-                #         nearest = (-sim[i, :]).argsort()[1:top_k + 1]
-                #         log_str = '   Nearest to %s:' % word
-                #         for k in xrange(top_k):
-                #             nbr = index[nearest[k]]
-                #             log_str = '%s %s,' % (log_str, nbr)
-                #         print(log_str)
+                average_loss += loss_val
+                if verbose and step % loss_logging_interval == 0:
+                    average_loss /= loss_logging_interval
+                    print('Average loss at step ', step, ': ', average_loss)
+                    average_loss = 0
+
+                # Log validation word closest neighbors
+                if verbose and step % sim_logging_interval == 0:
+                    sim = self.similarity_.eval()
+                    for i in xrange(len(sample)):
+                        word = index[sample[i]]
+                        top_k = 8  # number of nearest neighbors
+                        nearest = (-sim[i, :]).argsort()[1:top_k + 1]
+                        log_str = '   Nearest to %s:' % word
+                        for k in xrange(top_k):
+                            nbr = index[nearest[k]]
+                            log_str = '%s %s,' % (log_str, nbr)
+                        print(log_str)
 
                 # check stopping criteria
                 step += 1
