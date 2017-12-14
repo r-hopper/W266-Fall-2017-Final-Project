@@ -171,9 +171,9 @@ class BiW2V(object):
             # TODO: add code here if we want to combine U and V w/ gamma weight
 
             # Retrieve context & word embeddings for validation words
-            embeded_words = tf.nn.embedding_lookup(self.context_embeddings_,
+            embedded_words = tf.nn.embedding_lookup(self.context_embeddings_,
                                                    self.valid_words_)
-            self.similarity_ = tf.matmul(embeded_words,
+            self.similarity_ = tf.matmul(embedded_words,
                                          self.context_embeddings_,
                                          transpose_b=True)
 
@@ -181,7 +181,7 @@ class BiW2V(object):
     def translate(self, word_idxs):
         """
         Helper method used in training to translate centerwords at runtime.
-        Base Implementation: no traslation, this is a dummy method for later.
+        Base Implementation: no translation, this is a dummy method for later.
         """
         return word_idxs
 
