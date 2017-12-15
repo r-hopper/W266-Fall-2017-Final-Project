@@ -1,8 +1,18 @@
 #!/usr/bin python
 # -*- coding: utf-8 -*-
 """
-Word2Vec with CBOW model that replaces centerword with
-a randomly chosen translation from a provided dictionary.
+Word2Vec with CBOW models that replaces centerword with
+a translation from a provided dictionary.
+
+Four classes:
+
+    BiW2V:        - no word substitution
+    BiW2V_random: - substitute a random translation
+    BiW2V_mle:    - sustitute the translation that occurs
+                    most often in the target language.
+    BiW2V_nn:     - substitute the translation  word whose
+                    context embedding is closest to to the
+                    context vector from the source language.
 
 INSPIRED BY:
     Duong, Long & Kanayama, Hiroshi & Ma, Tengfei & Bird,
@@ -34,8 +44,8 @@ def with_self_graph(function):
             return function(self, *args, **kwargs)
     return wrapper
 
-
-# Model 1
+#####################################################################
+##################### Model 0 - no word translation #################
 class BiW2V(object):
     """
     Bilingual Word2Vec.
@@ -44,7 +54,9 @@ class BiW2V(object):
         self.BuildCoreGraph()
         self.BuildTrainingGraph(loss = 'sampled_softmax')
         self.BuildValidationGraph()
-        self.learn_embeddings(num_steps, batch_fxn, data, index, verbose=True)
+        self.translate(word_idxs)
+        self.train(nSteps, data, sample = [3,4,5,6,7], verbose = True)
+        self.plot_embeddings_in_2D(wordset)
     """
 
     def __init__(self, graph=None, *args, **kwargs):
@@ -68,13 +80,13 @@ class BiW2V(object):
         # Hyperparameters
         with tf.variable_scope("Training_Parameters"):
             self.softmax_ns_ = 64 # TODO: find an alternative to hard coding?
-            #self.softmax_ns_ = tf.placeholder_with_default(64, [], name = 'ns')
             self.learning_rate_ = tf.placeholder_with_default(1.0, [],
                                                     name = 'learning_rate')
 
         # Results (parameters retrieved after training)
         self.context_embeddings = None
         self.word_embeddings = None
+
 
     @with_self_graph
     def BuildCoreGraph(self):
@@ -116,6 +128,8 @@ class BiW2V(object):
 
         # No output layer because we don't intend to use this model, we just
         # want access to its parameters to use as features for other models.
+        print("... TF graph created for BiW2V model.")
+
 
     @with_self_graph
     def BuildTrainingGraph(self):
@@ -153,6 +167,8 @@ class BiW2V(object):
             optimizer = tf.train.GradientDescentOptimizer(self.learning_rate_)
             self.train_step_ = optimizer.minimize(self.loss_)
 
+        print("... TF graph created for BiW2V training.")
+
 
     @with_self_graph
     def BuildValidationGraph(self):
@@ -173,16 +189,18 @@ class BiW2V(object):
 
             # Retrieve context & word embeddings for validation words
             embedded_words = tf.nn.embedding_lookup(self.context_embeddings_,
-                                                   self.valid_words_)
+                                                    self.valid_words_)
             self.similarity_ = tf.matmul(embedded_words,
                                          self.context_embeddings_,
                                          transpose_b=True)
+        print("... TF graph created for BiW2V validation.")
 
 
     def translate(self, word_idxs):
         """
         Helper method used in training to translate centerwords at runtime.
-        Base Implementation: no translation, this is a dummy method for later.
+        Base Implementation: no translation, this is a dummy method that
+        will be overwritten in child classes.
         """
         return word_idxs
 
@@ -231,44 +249,46 @@ class BiW2V(object):
             average_loss = 0
             print('... Starting Training')
             for batch, labels in data:
+                trans = self.translate(labels)      # FOR DEBUGGING
+                print(type(labels), type(trans))    # FOR DEBUGGING
 
-                # Run the train op
-                feed_dict = {self.context_ : batch,
-                             self.centerword_ : labels,
-                             self.valid_words_ : sample,
-                             self.translation_ : self.translate(labels)}
-                _, loss_val = session.run([self.train_step_, self.loss_],
-                                          feed_dict = feed_dict)
-
-                # Log Average Loss
-                average_loss += loss_val
-                if verbose and step % loss_logging_interval == 0:
-                    average_loss /= loss_logging_interval
-                    print('Average loss at step ', step, ': ', average_loss)
-                    average_loss = 0
-
-                # Log validation word closest neighbors
-                if verbose and step % sim_logging_interval == 0:
-                    sim = session.run(self.similarity_, feed_dict = feed_dict)
-                    for i in xrange(len(sample)):
-                        word = self.index[sample[i]]
-                        top_k = 8  # number of nearest neighbors
-                        nearest = (-sim[i, :]).argsort()[1:top_k + 1]
-                        log_str = '   Nearest to %s:' % word
-                        for k in xrange(top_k):
-                            nbr = self.index[nearest[k]]
-                            log_str = '%s %s,' % (log_str, nbr)
-                        print(log_str)
-
-                # check stopping criteria
-                step += 1
-                if step > nSteps:
-                    print('... Training Complete')
-                    break
-
-            # results (extract parameters to class vars)
-            self.context_embeddings = self.context_embeddings_.eval()
-            self.word_embeddings = self.word_embeddings_.eval()
+            #     # Run the train op
+            #     feed_dict = {self.context_ : batch,
+            #                  self.centerword_ : labels,
+            #                  self.valid_words_ : sample,
+            #                  self.translation_ : self.translate(labels)}
+            #     _, loss_val = session.run([self.train_step_, self.loss_],
+            #                               feed_dict = feed_dict)
+            #
+            #     # Log Average Loss
+            #     average_loss += loss_val
+            #     if verbose and step % loss_logging_interval == 0:
+            #         average_loss /= loss_logging_interval
+            #         print('Average loss at step ', step, ': ', average_loss)
+            #         average_loss = 0
+            #
+            #     # Log validation word closest neighbors
+            #     if verbose and step % sim_logging_interval == 0:
+            #         sim = session.run(self.similarity_, feed_dict = feed_dict)
+            #         for i in xrange(len(sample)):
+            #             word = self.index[sample[i]]
+            #             top_k = 8  # number of nearest neighbors
+            #             nearest = (-sim[i, :]).argsort()[1:top_k + 1]
+            #             log_str = '   Nearest to %s:' % word
+            #             for k in xrange(top_k):
+            #                 nbr = self.index[nearest[k]]
+            #                 log_str = '%s %s,' % (log_str, nbr)
+            #             print(log_str)
+            #
+            #     # check stopping criteria
+            #     step += 1
+            #     if step > nSteps:
+            #         print('... Training Complete')
+            #         break
+            #
+            # # results (extract parameters to class vars)
+            # self.context_embeddings = self.context_embeddings_.eval()
+            # self.word_embeddings = self.word_embeddings_.eval()
 
 
     def plot_embeddings_in_2D(self, wordset):
@@ -291,3 +311,52 @@ class BiW2V(object):
                              textcoords = 'offset points', ha = 'right',
                              va = 'bottom')
             plt.show()
+
+#####################################################################
+##################### Model 1 - random translation ##################
+
+class BiW2V_random(BiW2V):
+    """
+    Bilingual Word2Vec.
+    This model trains embeddings in two languages by jointly
+    optimizing the softmax probability of the source langauge
+    centerword and a randomly chosen translation.
+    """
+
+    def __init__(self, languages, multi_dict, get_idx ,*args, **kwargs):
+        """
+        Initialize TensorFlow Neural Net Model.
+        Args:
+          index     - vocabulary dict of {idx : word}.
+          H         - embedding size, an int.
+          languages - langauge prefixes, a tuple of str.
+          multi_dict- multilingual dictionary where words
+                      are mapped to 1 or more translations.
+          get_idx   - a function that retrieves the index
+                      of a list of words.
+        """           # TODO: fix how we handle the index retrieval
+                      # we're probably going to have to do this in
+                      # the Vocabulary Class anyway to get the bi-
+                      # lingual vocab lists. Maybe pass that object
+                      # in the parent class instead of just an index.
+
+        # in addition to the normal Word2Vec args....
+        super(BiW2V_random, self).__init__(*args, **kwargs)
+
+        # also record the languages and load the dictionary
+        self.languages = languages
+        self.translations = multi_dict
+        self.get_idx = get_idx
+
+    def translate(self, word_idxs):
+        """
+        Helper method to return the index of a randomly chosen
+        translation for each word. If no translation is found,
+        return the target language <unk> token.
+        """
+        new_idxs = []
+        for idx in word_idxs:
+            wrd = self.index[idx]
+            trans = self.translations.get(wrd, ['<unk>'])
+            new_idxs.append(self.get_idx(trans))
+        return new_idxs.squeeze()
