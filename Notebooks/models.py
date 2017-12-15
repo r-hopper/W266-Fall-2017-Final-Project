@@ -1,4 +1,5 @@
 #!/usr/bin python
+# -*- coding: utf-8 -*-
 """
 Word2Vec with CBOW model that replaces centerword with
 a randomly chosen translation from a provided dictionary.
@@ -64,7 +65,7 @@ class BiW2V(object):
         self.V = len(index)
         self.H = H
 
-        # Hyperparameters & Validation Examples
+        # Hyperparameters
         with tf.variable_scope("Training_Parameters"):
             self.softmax_ns_ = 64 # TODO: find an alternative to hard coding?
             #self.softmax_ns_ = tf.placeholder_with_default(64, [], name = 'ns')
@@ -99,7 +100,7 @@ class BiW2V(object):
 
             # Input for hidden layer NOTE: self.input_ is Duong's 'h'
             embed = tf.nn.embedding_lookup(self.C_, self.context_)
-            span = 8 # TODO: fix this so that it infers the context length!
+            span = 2 # TODO: fix this so that it infers the context length!
             self.input_ = tf.div(tf.reduce_sum(embed, 1), span)
 
 
@@ -248,14 +249,14 @@ class BiW2V(object):
 
                 # Log validation word closest neighbors
                 if verbose and step % sim_logging_interval == 0:
-                    sim = self.similarity_.eval()
+                    sim = session.run(self.similarity_, feed_dict = feed_dict)
                     for i in xrange(len(sample)):
-                        word = index[sample[i]]
+                        word = self.index[sample[i]]
                         top_k = 8  # number of nearest neighbors
                         nearest = (-sim[i, :]).argsort()[1:top_k + 1]
                         log_str = '   Nearest to %s:' % word
                         for k in xrange(top_k):
-                            nbr = index[nearest[k]]
+                            nbr = self.index[nearest[k]]
                             log_str = '%s %s,' % (log_str, nbr)
                         print(log_str)
 

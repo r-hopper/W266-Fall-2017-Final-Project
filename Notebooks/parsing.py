@@ -1,4 +1,5 @@
 #!/usr/bin python
+# -*- coding: utf-8 -*-
 """
 Data parsing classes & functions supporting our
 w266 Project on Crosslingual Word Embeddings.
