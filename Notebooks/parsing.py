@@ -28,27 +28,25 @@ class Corpus(object):
         gen_sentences - generator factory for sentences in order
     """
 
-    def __init__(self, path, prefix = None):
+    def __init__(self, path, language = None):
         err_msg = "ERROR: corpus filepath not valid"
         assert os.path.isfile(path), err_msg
         self.path = path
-        self.lang = ''
-        if prefix is not None:
-            # prefix should end in a single underscore
-            self.lang = prefix + '_' * (prefix[-1] != '_' )
+        self.lang = language
+        self.pre = '%s_'%(self.lang) if self.lang is not None else ''
 
 
     def gen_tokens(self):
         """Return a generator of tokens."""
         for line in open(self.path, 'rb'):
-            for token in line.strip().lower().split():
-                yield self.lang + token
+            for tok in line.strip().lower().split():
+                yield self.pre + tok
 
     def gen_sentences(self):
         """Return a generator of sentences."""
         for line in open(self.path, 'rb'):
             line = line.lower().strip('\n')
-            yield re.sub(' ', self.lang, ' ' + line)
+            yield re.sub(' ', ' ' + self.pre, ' ' + line)
 
 class Vocabulary(object):
     """
