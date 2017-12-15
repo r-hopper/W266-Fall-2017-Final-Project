@@ -249,46 +249,44 @@ class BiW2V(object):
             average_loss = 0
             print('... Starting Training')
             for batch, labels in data:
-                trans = self.translate(labels)      # FOR DEBUGGING
-                print(type(labels), type(trans))    # FOR DEBUGGING
 
-            #     # Run the train op
-            #     feed_dict = {self.context_ : batch,
-            #                  self.centerword_ : labels,
-            #                  self.valid_words_ : sample,
-            #                  self.translation_ : self.translate(labels)}
-            #     _, loss_val = session.run([self.train_step_, self.loss_],
-            #                               feed_dict = feed_dict)
-            #
-            #     # Log Average Loss
-            #     average_loss += loss_val
-            #     if verbose and step % loss_logging_interval == 0:
-            #         average_loss /= loss_logging_interval
-            #         print('Average loss at step ', step, ': ', average_loss)
-            #         average_loss = 0
-            #
-            #     # Log validation word closest neighbors
-            #     if verbose and step % sim_logging_interval == 0:
-            #         sim = session.run(self.similarity_, feed_dict = feed_dict)
-            #         for i in xrange(len(sample)):
-            #             word = self.index[sample[i]]
-            #             top_k = 8  # number of nearest neighbors
-            #             nearest = (-sim[i, :]).argsort()[1:top_k + 1]
-            #             log_str = '   Nearest to %s:' % word
-            #             for k in xrange(top_k):
-            #                 nbr = self.index[nearest[k]]
-            #                 log_str = '%s %s,' % (log_str, nbr)
-            #             print(log_str)
-            #
-            #     # check stopping criteria
-            #     step += 1
-            #     if step > nSteps:
-            #         print('... Training Complete')
-            #         break
-            #
-            # # results (extract parameters to class vars)
-            # self.context_embeddings = self.context_embeddings_.eval()
-            # self.word_embeddings = self.word_embeddings_.eval()
+                # Run the train op
+                feed_dict = {self.context_ : batch,
+                             self.centerword_ : labels,
+                             self.valid_words_ : sample,
+                             self.translation_ : self.translate(labels)}
+                _, loss_val = session.run([self.train_step_, self.loss_],
+                                          feed_dict = feed_dict)
+
+                # Log Average Loss
+                average_loss += loss_val
+                if verbose and step % loss_logging_interval == 0:
+                    average_loss /= loss_logging_interval
+                    print('Average loss at step ', step, ': ', average_loss)
+                    average_loss = 0
+
+                # Log validation word closest neighbors
+                if verbose and step % sim_logging_interval == 0:
+                    sim = session.run(self.similarity_, feed_dict = feed_dict)
+                    for i in xrange(len(sample)):
+                        word = self.index[sample[i]]
+                        top_k = 8  # number of nearest neighbors
+                        nearest = (-sim[i, :]).argsort()[1:top_k + 1]
+                        log_str = '   Nearest to %s:' % word
+                        for k in xrange(top_k):
+                            nbr = self.index[nearest[k]]
+                            log_str = '%s %s,' % (log_str, nbr)
+                        print(log_str)
+
+                # check stopping criteria
+                step += 1
+                if step > nSteps:
+                    print('... Training Complete')
+                    break
+
+            # results (extract parameters to class vars)
+            self.context_embeddings = self.context_embeddings_.eval()
+            self.word_embeddings = self.word_embeddings_.eval()
 
 
     def plot_embeddings_in_2D(self, wordset):
@@ -356,7 +354,10 @@ class BiW2V_random(BiW2V):
         """
         new_idxs = []
         for idx in word_idxs:
-            wrd = self.index[idx]
-            trans = self.translations.get(wrd, ['<unk>'])
-            new_idxs.append(self.get_idx(trans))
-        return new_idxs.squeeze()
+           wrd = self.index[idx]
+           trans = self.translations.get(wrd, ['<unk>'])
+           new_idxs.append(self.get_idx(trans))
+        #return new_idxs
+        print(type(word_idxs))
+        print(len(word_idxs))
+        return word_idxs
