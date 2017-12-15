@@ -22,7 +22,7 @@ class Corpus(object):
     Intended to facilitate working with multiple corpora at once.
     Init Args:
         path - (str) filepath of the raw data
-        lang - (str) optional language prefix to prepend when reading
+        prefix - (str) optional language prefix to prepend when reading
     Methods:
         gen_tokens - generator factory for tokens in order
         gen_sentences - generator factory for sentences in order
@@ -32,10 +32,10 @@ class Corpus(object):
         err_msg = "ERROR: corpus filepath not valid"
         assert os.path.isfile(path), err_msg
         self.path = path
-        self.prefix = ''
-        if lang is not None:
+        self.lang = ''
+        if prefix is not None:
             # prefix should end in a single underscore
-            self.lang = lang + '_' * (lang[-1] != '_' )
+            self.lang = prefix + '_' * (prefix[-1] != '_' )
 
 
     def gen_tokens(self):
