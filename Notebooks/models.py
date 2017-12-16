@@ -203,7 +203,40 @@ class BiW2V(object):
         will be overwritten in child classes.
         """
         return word_idxs
+   
+    def evaluate_prediction(self, source_lang, target_lang, top_k, word):
+        """
+        Given example source words and the ground truth translations, 
+        evaluate the number of source language words for which one of the top three predictions is the correct translation
+        (fuzzy measure adopted from stricter Vulic and Moens task which requires that one predicted translation is exactly correct)
 
+        Takes:
+        source_lang: a two-letter string representing the source language
+        target_lang: a two-letter string representing the target language
+        top_k: the number of predictions we're checking for in the ground truth list
+        word: the word we are interested in evaluating
+
+        Returns:
+        nearest: the top_k nearest neighbors of word
+        valid_translation: tracks how many words in "nearest" are valid translations 
+            (range 0-k, restricted by the number of translations in the ground truth list)
+        """
+
+        GTT_BASE = '/home/rhopper/W266-Fall-2017-Final-Project/BaselineModels/data/ground_truth_translations/' #'/home/mmillervedam/ProjectRepo/BaselineModels/data/ground_truth_translations/'
+        GTT_PATH = GTT_BASE + "%s-%s-clean.txt" % (source_lang, target_lang)
+        gtt = pd.read_csv(GTT_PATH, names = [source_lang, target_lang], sep=" ", header=None)
+
+        valid_translation=0
+        nearest = (-sim[i, :]).argsort()[1:top_k + 1]
+        for k in range(top_k):
+            close_word = reverse_dictionary[nearest[k]]
+            total_translations = (gtt[gtt[source_lang] == word])
+            if close_word in total_translations[total_translations.columns[1]].values:
+                valid_translation+=1
+            else:
+                valid_translation+=0
+
+        return nearest, valid_translation
 
     def train(self, nSteps, data, sample = [3,4,5,6,7], learning_rate = None, verbose = True):
         """
@@ -271,15 +304,43 @@ class BiW2V(object):
                 # Log validation word closest neighbors
                 if verbose and step % sim_logging_interval == 0:
                     sim = session.run(self.similarity_, feed_dict = feed_dict)
+                    bli = self.evaluate_prediction()
+                    total_valid=[] #Track the total number of valid translations in the nearest k
+                    any_valid=[] #Track whether ANY of the nearest k were valid translations
                     for i in xrange(len(sample)):
-                        word = self.index[sample[i]]
-                        top_k = 8  # number of nearest neighbors
-                        nearest = (-sim[i, :]).argsort()[1:top_k + 1]
-                        log_str = '   [%s] sim words: ' % word
+                        word = index[sample[i]]
+                        top_k = 3  # number of nearest neighbors
+                        nearest, valid_translation = bli(source_lang, target_lang, top_k, word)
+                        total_valid.append(valid_translation)
+                        log_str = '   Nearest to %s:' % word
                         for k in xrange(top_k):
-                            nbr = self.index[nearest[k]]
+                            nbr = index[nearest[k]]
                             log_str = '%s %s,' % (log_str, nbr)
                         print(log_str)
+
+                    #For any_valid, we need 0/1 to calculate the mean
+                    for s in range(len(total_valid)):
+                        if total_valid[s] > 0:
+                            any_valid.append(1)
+                        else:
+                            any_valid.append(0)
+                    accuracy = (sum(any_valid) / (len(any_valid)))
+                    print('Successful translation rate: %d' % accuracy)
+                
+                
+                
+                # Prior version
+                #if verbose and step % sim_logging_interval == 0:
+                    #sim = session.run(self.similarity_, feed_dict = feed_dict)
+                    #for i in xrange(len(sample)):
+                        #word = self.index[sample[i]]
+                        #top_k = 8  # number of nearest neighbors
+                        #nearest = (-sim[i, :]).argsort()[1:top_k + 1]
+                        #log_str = '   [%s] sim words: ' % word
+                        #for k in xrange(top_k):
+                            #nbr = self.index[nearest[k]]
+                            #log_str = '%s %s,' % (log_str, nbr)
+                        #print(log_str)
 
                 # check stopping criteria
                 step += 1
