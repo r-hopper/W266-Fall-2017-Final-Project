@@ -18,6 +18,7 @@ _fill in smth. here before sharing this repo with others_
 * Sleep a lot. 
 * Write up each model's architecture/development/interpretation/performance.
 * Rewrite 'Lit Review' section to narrow the scope (just focus on answering the questions posed in the milestone)
+  > UPDATE 12/15: Have written outlines for the answers to the milestone questions, and have tried to give more cohesion to the lit review section. Our reviews of the papers are fairly comprehensive, but need stronger/clearer ties back to Duong et al.
 * Chose a set of Demo words to illustrate vector performance w/ cosine similarity.
 * Evaluate all 3 models on the BLI
 * Write the Bilingual Induction task Evaluation Code
