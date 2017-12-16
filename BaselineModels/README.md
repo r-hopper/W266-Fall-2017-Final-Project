@@ -25,5 +25,5 @@ Compiling resources for baseline models cited in "Learning Crosslingual Word Emb
 
 **Luong (2015): [Bilingual Word Representations with Monolingual Quality in Mind](http://www.aclweb.org/anthology/W15-1521); [GitHub Implementation](https://github.com/lmthang/bivec)**
   * This is the official GitHub repo for the paper
-  * This is also the repo listed for Klementiev
+  * This is also the repo listed for Klementiev 
 
