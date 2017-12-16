@@ -99,7 +99,7 @@ class Vocabulary(object):
         return [self.START_ID] + self.to_ids(sentence.split()) + [self.END_ID]
 
 
-def batch_generator(corpus, vocabulary, batch_size, bag_window, max_epochs = None):
+def batch_generator(corpus, vocabulary, batch_size, window, max_epochs = None):
     """
     Function to iterate repeated over a corpus delivering
     batch_size arrays of ids and context_labels for CBOW.
@@ -121,7 +121,7 @@ def batch_generator(corpus, vocabulary, batch_size, bag_window, max_epochs = Non
     you specify max_epochs or explicitly break.
     """
     nEpochs = 0
-    span = 2 * bag_window + 1 # context size
+    span = 2 * window + 1 # context size
     batch = [] # context lists of len span - 1
     labels = [] # center words
 
@@ -142,11 +142,13 @@ def batch_generator(corpus, vocabulary, batch_size, bag_window, max_epochs = Non
                 break
 
         # get the ids & their contexts
-        tokens = vocabulary.sentence_to_ids(sentence)
-        ids.extend(tokens[1:-1])
-        contexts.extend([tokens[i - bag_window : i] +
-                         tokens[i + 1 : i + bag_window + 1]
-                         for i in range(1, len(tokens)-1)])
+        tokens = [vocabulary.START_ID] * window  # left pad
+        tokens += vocabulary.sentence_to_ids(sentence)[1:-1]
+        tokens += [vocabulary.END_ID] * window  # right pad
+        ids.extend(tokens[window: - window])
+        contexts.extend([tokens[i - window : i] +
+                         tokens[i + 1 : i + window + 1]
+                         for i in range(window, len(tokens) - window)])
 
         # emit a batch if you can
         err_msg = "... ERROR: ids/context length mismatch"

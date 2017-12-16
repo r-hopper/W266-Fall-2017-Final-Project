@@ -265,7 +265,7 @@ class BiW2V(object):
                 average_loss += loss_val
                 if verbose and step % loss_logging_interval == 0:
                     average_loss /= loss_logging_interval
-                    print('... STEP ', step, ': Average Loss :', average_loss)
+                    print('... STEP', step, ': Average Loss :', average_loss)
                     average_loss = 0
 
                 # Log validation word closest neighbors
