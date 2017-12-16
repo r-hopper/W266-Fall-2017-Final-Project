@@ -15,12 +15,13 @@ _fill in smth. here before sharing this repo with others_
 * [Word2Vec in TensorFlow Tutorial](http://adventuresinmachinelearning.com/word2vec-tutorial-tensorflow/) from Adventures in Machine Learning.
 
 ## TO DO (reverse chronological order)
-* Sleep alot. 
+* Sleep a lot. 
 * Write up each model's architecture/development/interpretation/performance.
 * Rewrite 'Lit Review' section to narrow the scope (just focus on answering the questions posed in the milestone)
 * Chose a set of Demo words to illustrate vector performance w/ cosine similarity.
 * Evaluate all 3 models on the BLI
 * Write the Bilingual Induction task Evaluation Code
+  > UPDATE 12/15: evaluate_translation() (and the code to slot it into models.py) is written in a notebook, but needs to be incorporated and tested in models.py
 * Create a third model that uses context to pick the word to substitute on
   > NOTE: ask Melody/James whether our interpretations make sense? In what sense is this "EM"?
 * Create a second model with probabilistic word substitution
