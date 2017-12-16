@@ -311,6 +311,8 @@ class BiW2V(object):
                     for i in xrange(len(sample)):
                         word = index[sample[i]]
                         top_k = 3  # number of nearest neighbors
+                        source_lang = "en" #Hard-coding for testing; should be self.lang1
+                        target_lang = "it" #Hard-coding for testing; should be self.lang2
                         nearest, valid_translation = bli(source_lang, target_lang, sim, top_k, word)
                         total_valid.append(valid_translation)
                         log_str = '   Nearest to %s:' % word
