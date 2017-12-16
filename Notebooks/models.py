@@ -205,7 +205,7 @@ class BiW2V(object):
         return word_idxs
 
 
-    def train(self, nSteps, data, sample = [3,4,5,6,7], verbose = True):
+    def train(self, nSteps, data, sample = [3,4,5,6,7], learning_rate = None, verbose = True):
         """
         Train the model on the provided data.
 
@@ -255,6 +255,9 @@ class BiW2V(object):
                              self.centerword_ : labels,
                              self.valid_words_ : sample,
                              self.translation_ : self.translate(labels)}
+                if learning_rate is not None:
+                    feed_dict[self.learning_rate_] = learning_rate
+
                 _, loss_val = session.run([self.train_step_, self.loss_],
                                           feed_dict = feed_dict)
 
@@ -262,7 +265,7 @@ class BiW2V(object):
                 average_loss += loss_val
                 if verbose and step % loss_logging_interval == 0:
                     average_loss /= loss_logging_interval
-                    print('Average loss at step ', step, ': ', average_loss)
+                    print('... STEP ', step, ': Average Loss :', average_loss)
                     average_loss = 0
 
                 # Log validation word closest neighbors
@@ -272,7 +275,7 @@ class BiW2V(object):
                         word = self.index[sample[i]]
                         top_k = 8  # number of nearest neighbors
                         nearest = (-sim[i, :]).argsort()[1:top_k + 1]
-                        log_str = '   Nearest to %s:' % word
+                        log_str = '   [%s] sim words: ' % word
                         for k in xrange(top_k):
                             nbr = self.index[nearest[k]]
                             log_str = '%s %s,' % (log_str, nbr)
@@ -321,7 +324,7 @@ class BiW2V_random(BiW2V):
     centerword and a randomly chosen translation.
     """
 
-    def __init__(self, languages, multi_dict, get_idx ,*args, **kwargs):
+    def __init__(self, languages, multi_dict, to_idxs ,*args, **kwargs):
         """
         Initialize TensorFlow Neural Net Model.
         Args:
@@ -344,7 +347,7 @@ class BiW2V_random(BiW2V):
         # also record the languages and load the dictionary
         self.languages = languages
         self.translations = multi_dict
-        self.get_idx = get_idx
+        self.get_idxs = to_idxs
 
     def translate(self, word_idxs):
         """
@@ -352,12 +355,9 @@ class BiW2V_random(BiW2V):
         translation for each word. If no translation is found,
         return the target language <unk> token.
         """
-        new_idxs = []
+        target_words = []
         for idx in word_idxs:
            wrd = self.index[idx]
-           trans = self.translations.get(wrd, ['<unk>'])
-           new_idxs.append(self.get_idx(trans))
-        #return new_idxs
-        print(type(word_idxs))
-        print(len(word_idxs))
-        return word_idxs
+           translations = self.translations.get(wrd, ['<unk>'])
+           target_words.append(np.random.choice(translations))
+        return self.get_idxs(target_words)
