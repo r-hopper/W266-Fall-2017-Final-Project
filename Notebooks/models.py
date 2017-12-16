@@ -204,7 +204,7 @@ class BiW2V(object):
         """
         return word_idxs
    
-    def evaluate_prediction(self, source_lang, target_lang, top_k, word):
+    def evaluate_prediction(self, source_lang, target_lang, sim, top_k, word):
         """
         Given example source words and the ground truth translations, 
         evaluate the number of source language words for which one of the top three predictions is the correct translation
@@ -213,6 +213,7 @@ class BiW2V(object):
         Takes:
         source_lang: a two-letter string representing the source language
         target_lang: a two-letter string representing the target language
+        sim: most similar words from similarity_()
         top_k: the number of predictions we're checking for in the ground truth list
         word: the word we are interested in evaluating
 
@@ -310,7 +311,7 @@ class BiW2V(object):
                     for i in xrange(len(sample)):
                         word = index[sample[i]]
                         top_k = 3  # number of nearest neighbors
-                        nearest, valid_translation = bli(source_lang, target_lang, top_k, word)
+                        nearest, valid_translation = bli(source_lang, target_lang, sim, top_k, word)
                         total_valid.append(valid_translation)
                         log_str = '   Nearest to %s:' % word
                         for k in xrange(top_k):
