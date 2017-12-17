@@ -3,6 +3,8 @@
 """
 Data parsing classes & functions supporting our
 w266 Project on Crosslingual Word Embeddings.
+Note: Start Jupyter with 
+      jupyter notebook --NotebookApp.iopub_data_rate_limit=10000000000
 
 Acknowledgements:
     As noted, a number of these methods are derived
@@ -14,6 +16,14 @@ import os
 import re
 import collections
 import numpy as np
+
+### MI - Added for file handles
+import resource
+import time
+
+#####
+
+#####
 
 
 class Corpus(object):
@@ -34,7 +44,9 @@ class Corpus(object):
         self.path = path
         self.lang = language
         self.pre = '%s_'%(self.lang) if self.lang is not None else ''
-
+        
+        ### MI - Added for shuffle
+        self.splits = 0    
 
     def gen_tokens(self):
         """Return a generator of tokens."""
@@ -47,6 +59,98 @@ class Corpus(object):
         for line in open(self.path, 'rb'):
             line = line.lower().strip('\n')
             yield re.sub(' ', ' ' + self.pre, ' ' + line)
+            
+    def split_file(self, min_length = 1):
+        '''
+        Splits the file into smaller files of 10K sentences
+        to be shuffled.  Warning this can be
+        '''
+        
+        start = time.clock()
+        PTH = './split_files/'
+        newfile = True
+        for line in open(self.path, 'rb'):
+            if newfile == True:
+                file = open(PTH+self.pre+"text_"+ str(self.splits) +".txt","w+")
+                idx = 1
+                newfile = False
+            line = line.lower().strip('\n')
+            wordcnt = len(line.strip().split(' '))            
+            # Only use sentence of length > min_length
+            if wordcnt >= min_length:                
+                s = re.sub(' ', ' ' + self.pre, ' ' + line)
+                file.write(s+'\n')
+                idx +=1
+            if idx > 10000:
+                self.splits +=1
+                file.close()
+                newfile = True
+        file.close()
+        end = time.clock()
+        print("Time to split - ", end-start, "seconds")
+        print(self.splits, "files written")
+
+        
+    def draw_random(self, sample_size = 5000000):
+        '''
+        Randomly draws from the split files to create a shuffled
+        monolingual file. Default sample size is 5M sentences as 
+        in the original paper.
+        '''        
+        PTH = './split_files/'
+        PTH_SHFL = './shuffled_files/' 
+
+        # We will be sampling 5M sentences.        
+        num_sampled = sample_size        
+        start = time.clock()
+        errors = 0
+        # We have a large number of open files.  
+        soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
+        assert soft>9000
+        print(resource.getrlimit(resource.RLIMIT_NOFILE))
+        
+        idx = 0
+        f = [open(PTH+self.pre+"text_%d.txt" % i, "rU") for i in range(self.splits+1)]
+      
+        # This array stores the randomly chosen index of the file 
+        picklist = np.random.randint(0, self.splits+1, size = num_sampled)
+
+        # Write to file
+        out = open(PTH_SHFL+self.pre+"shuffled.txt", 'w+')
+        for i in range(num_sampled):
+            f_index = picklist[i]
+            try:
+                s = f[f_index].readline()
+                
+            except EOFError:
+                errors += 1
+                continue
+            out.write(s)
+
+        out.close()
+        end = time.clock()
+        print("Time to shuffle - ", end-start, "seconds")
+        print(errors, "sentences skipped")
+
+        for fh in f:
+            fh.close() 
+            
+def make_bilingual(corpus1,corpus2):
+    '''
+    Combines two shuffled corpora
+    '''
+    PTH_SHFL = './shuffled_files/' 
+    
+    with open(PTH_SHFL+corpus1.pre+"shuffled.txt","r") as c1, open(PTH_SHFL+corpus2.pre+"shuffled.txt","r") as c2, open(PTH_SHFL+corpus1.pre+corpus2.pre+"shuf.txt","w") as out:
+        i = 0
+        for line in c1:
+            out.write(line)
+            try:
+                line2 = c2.readline()
+            except:
+                continue
+            out.write(line2)
+         
 
 class Vocabulary(object):
     """
@@ -60,6 +164,7 @@ class Vocabulary(object):
         self.size    - integer, number of words in total
         self.types   - dictionary of {type : id}
         self.wordset - set of types
+        self.language- order of languages in the index
     Methods:
         self.to_ids(words) - returns list of ids for the word list
         self.to_words(ids) - returns list of words for the id list
@@ -88,6 +193,7 @@ class Vocabulary(object):
         self.size = len(self.index)
         if size is not None:
             assert(self.size <= size)
+        self.language = ('en','en')
 
     def to_ids(self, words):
         return [self.types.get(w, self.UNK_ID) for w in words]
