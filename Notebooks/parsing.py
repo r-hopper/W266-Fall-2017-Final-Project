@@ -3,7 +3,7 @@
 """
 Data parsing classes & functions supporting our
 w266 Project on Crosslingual Word Embeddings.
-Note: Start Jupyter with 
+Note: Start Jupyter with
       jupyter notebook --NotebookApp.iopub_data_rate_limit=10000000000
 
 Acknowledgements:
@@ -14,16 +14,10 @@ Acknowledgements:
 from __future__ import print_function
 import os
 import re
+import time
+import resource
 import collections
 import numpy as np
-
-### MI - Added for file handles
-import resource
-import time
-
-#####
-
-#####
 
 
 class Corpus(object):
@@ -44,9 +38,7 @@ class Corpus(object):
         self.path = path
         self.lang = language
         self.pre = '%s_'%(self.lang) if self.lang is not None else ''
-        
-        ### MI - Added for shuffle
-        self.splits = 0    
+        self.splits = 0    # for shuffle
 
     def gen_tokens(self):
         """Return a generator of tokens."""
@@ -59,13 +51,12 @@ class Corpus(object):
         for line in open(self.path, 'rb'):
             line = line.lower().strip('\n')
             yield re.sub(' ', ' ' + self.pre, ' ' + line)
-            
+
     def split_file(self, min_length = 1):
         '''
         Splits the file into smaller files of 10K sentences
-        to be shuffled.  Warning this can be
+        to be shuffled.  Warning this can be time/memory consuming.
         '''
-        
         start = time.clock()
         PTH = './split_files/'
         newfile = True
@@ -75,9 +66,9 @@ class Corpus(object):
                 idx = 1
                 newfile = False
             line = line.lower().strip('\n')
-            wordcnt = len(line.strip().split(' '))            
+            wordcnt = len(line.strip().split(' '))
             # Only use sentence of length > min_length
-            if wordcnt >= min_length:                
+            if wordcnt >= min_length:
                 s = re.sub(' ', ' ' + self.pre, ' ' + line)
                 file.write(s+'\n')
                 idx +=1
@@ -90,29 +81,29 @@ class Corpus(object):
         print("Time to split - ", end-start, "seconds")
         print(self.splits, "files written")
 
-        
+
     def draw_random(self, sample_size = 5000000):
         '''
         Randomly draws from the split files to create a shuffled
-        monolingual file. Default sample size is 5M sentences as 
+        monolingual file. Default sample size is 5M sentences as
         in the original paper.
-        '''        
+        '''
         PTH = './split_files/'
-        PTH_SHFL = './shuffled_files/' 
+        PTH_SHFL = './shuffled_files/'
 
-        # We will be sampling 5M sentences.        
-        num_sampled = sample_size        
+        # We will be sampling 5M sentences.
+        num_sampled = sample_size
         start = time.clock()
         errors = 0
-        # We have a large number of open files.  
+        # We have a large number of open files.
         soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
         assert soft>9000
         print(resource.getrlimit(resource.RLIMIT_NOFILE))
-        
+
         idx = 0
         f = [open(PTH+self.pre+"text_%d.txt" % i, "rU") for i in range(self.splits+1)]
-      
-        # This array stores the randomly chosen index of the file 
+
+        # This array stores the randomly chosen index of the file
         picklist = np.random.randint(0, self.splits+1, size = num_sampled)
 
         # Write to file
@@ -121,7 +112,7 @@ class Corpus(object):
             f_index = picklist[i]
             try:
                 s = f[f_index].readline()
-                
+
             except EOFError:
                 errors += 1
                 continue
@@ -133,14 +124,14 @@ class Corpus(object):
         print(errors, "sentences skipped")
 
         for fh in f:
-            fh.close() 
-            
+            fh.close()
+
 def make_bilingual(corpus1,corpus2):
     '''
     Combines two shuffled corpora
     '''
-    PTH_SHFL = './shuffled_files/' 
-    
+    PTH_SHFL = './shuffled_files/'
+
     with open(PTH_SHFL+corpus1.pre+"shuffled.txt","r") as c1, open(PTH_SHFL+corpus2.pre+"shuffled.txt","r") as c2, open(PTH_SHFL+corpus1.pre+corpus2.pre+"shuf.txt","w") as out:
         i = 0
         for line in c1:
@@ -155,25 +146,19 @@ def make_bilingual(corpus1,corpus2):
 class Vocabulary(object):
     """
     This class is based heavily on code provided in a4 of MIDS w266, Fall 2017.
-    Init Args:
-        tokens    - iterable of tokens to count
-        wordset   - (optional) limit vocabulary to these words
-        size      - (optional) integer, number of vocabulary words
+
     Attributes:
         self.index   - dictionary of {id : type}
         self.size    - integer, number of words in total
         self.types   - dictionary of {type : id}
         self.wordset - set of types
         self.language- order of languages in the index
+                       (Bilingual version only)
     Methods:
         self.to_ids(words) - returns list of ids for the word list
         self.to_words(ids) - returns list of words for the id list
         self.sentence_to_ids(sentence) - returns list of ids with start & end
     """
-## Mona's notes
-## the wordset passed it may be the bi
-## Maya says in simple substitution embedding that " In reality we should probably modify the Vocab class so that it explicily collects the top words for each language separately and then concatenates the index."
-
     START_TOKEN = "<s>"
     END_TOKEN = "</s>"
     UNK_TOKEN = "<unk>"
@@ -182,43 +167,20 @@ class Vocabulary(object):
     UNK_ID = 2
 
     def __init__(self, tokens, wordset = None, size=None):
-        
+        """
+        Select Vocab from most Frequent Words
+        Args:
+            tokens    - iterable of tokens to count
+            wordset   - (optional) limit vocabulary to these words
+            size      - (optional) integer, number of vocabulary words
+        """
         # Count tokens from corpus (filter if wordset was specified)
         keep = lambda x: x in wordset if wordset is not None else True
-        self.language = list()
-        
-        counts_lang1 = collections.Counter()
-        counts_lang2 = collections.Counter()
-        
-        for t in tokens:
-            if keep(t):
-                # check prefix and update self.languages
-                pre = t[0:2]
-                # update language set
-                if pre not in self.language:
-                    self.language.append(pre)                
-                # separately count top words
-                if self.language.index(pre) == 0:
-                    counts_lang1[t] += 1
-                elif self.language.index(pre) == 1:
-                    counts_lang2[t] += 1
-                else:
-                    print("We are only bilingual at the moment.")
-                    
-        top_counts = counts_lang1.most_common(None if size is None else (size/2 - 2)) +             counts_lang1.most_common(None if size is None else (size/2 - 1))
-        
-        
-        # Previous version
-        #        counts = collections.Counter([t for t in tokens if keep(t)])
-        #        top_counts = counts.most_common(None if size is None else (size - 3))
-        #        types = ([self.START_TOKEN, self.END_TOKEN, self.UNK_TOKEN] +
-        #                 [w for w,c in top_counts])
-        
+        counts = collections.Counter([t for t in tokens if keep(t)])
+        top_counts = counts.most_common(None if size is None else (size - 3))
         types = ([self.START_TOKEN, self.END_TOKEN, self.UNK_TOKEN] +
-                 [w for w,c in top_counts])
+                [w for w,c in top_counts])
 
-        
-        
         # Easy access to various formats:
         self.wordset = set(types)
         self.index = dict(enumerate(types))
@@ -235,7 +197,55 @@ class Vocabulary(object):
 
     def sentence_to_ids(self, sentence):
         return [self.START_ID] + self.to_ids(sentence.split()) + [self.END_ID]
-     
+
+class BilingualVocabulary(Vocabulary):
+    """
+    Vocabulary class with words from two languages.
+    Inherits from Vocabulary and has all the same methods.
+    """
+    def __init__(self, tokens, languages, wordset = None, size=None):
+        """
+        Select Vocab from most Frequent Words in each Language
+        Args:
+            tokens    - iterable of tokens to count
+            languages - tuple of language prefixes
+            wordset   - (optional) limit vocab to these words
+            size      - (optional) integer, number of vocab
+                        words to include from each language.
+        """
+        # Class attribute
+        self.language = languages
+
+        # helper function for filtering wordset words
+        keep = lambda x: x in wordset if wordset is not None else True
+
+        # counter for each language
+        counts_lang1 = collections.Counter()
+        counts_lang2 = collections.Counter()
+
+        # stream corpus and add counts
+        for t in tokens:
+            if keep(t):
+                if t.startswith(self.language[0]):
+                    counts_lang1[t] += 1
+                elif t.startswith(self.language[1]):
+                    counts_lang2[t] += 1
+                else:
+                    print("We are only bilingual at the moment.")
+
+        # collect top words from each languages
+        top_counts = counts_lang1.most_common(None if size is None else size)
+        top_counts += counts_lang1.most_common(None if size is None else size)
+        types = ([self.START_TOKEN, self.END_TOKEN, self.UNK_TOKEN] +
+                 [w for w,c in top_counts])
+
+        # Easy access to various formats:
+        self.wordset = set(types)
+        self.index = dict(enumerate(types))
+        self.types = {v:k for k,v in self.index.iteritems()}
+        self.size = len(self.index)
+        if size is not None:
+            assert(self.size <= size * 2 + 3)
 
 
 def batch_generator(corpus, vocabulary, batch_size, window, max_epochs = None):

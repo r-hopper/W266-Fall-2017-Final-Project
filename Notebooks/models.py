@@ -33,7 +33,7 @@ import types
 import collections
 import numpy as np
 import tensorflow as tf
-#from sklearn.manifold import TSNE
+from sklearn.manifold import TSNE
 
 
 # Helper function
@@ -63,7 +63,7 @@ class BiW2V(object):
         """
         Initialize TensorFlow Neural Net Model.
         Args:
-          index - vocabulary dict of {idx : word}.
+          vocab - vocabulary object.
           H     - embedding size, an int.
         """
         # Set TensorFlow graph. All TF code will work on this graph.
@@ -71,10 +71,12 @@ class BiW2V(object):
         self.SetParams(*args, **kwargs)
 
     @with_self_graph
-    def SetParams(self, index, H):
+    def SetParams(self, vocab, H):
+        # Vocabulary
+        self.vocab = vocab
+
         # Model structure.
-        self.index = index # NOTE: row idx ~ rank w/in monolingual corpus
-        self.V = len(index)
+        self.V = self.vocab.size
         self.H = H
 
         # Hyperparameters
@@ -112,7 +114,7 @@ class BiW2V(object):
 
             # Input for hidden layer NOTE: self.input_ is Duong's 'h'
             embed = tf.nn.embedding_lookup(self.C_, self.context_)
-            span = 2 # TODO: fix this so that it infers the context length!
+            span = 16 # TODO: fix this so that it infers the context length!
             self.input_ = tf.div(tf.reduce_sum(embed, 1), span)
 
 
@@ -203,42 +205,7 @@ class BiW2V(object):
         will be overwritten in child classes.
         """
         return word_idxs
-   
-    def evaluate_prediction(self, source_lang, target_lang, i, sim, top_k, word):
-        """
-        Given example source words and the ground truth translations, 
-        evaluate the number of source language words for which one of the top three predictions is the correct translation
-        (fuzzy measure adopted from stricter Vulic and Moens task which requires that one predicted translation is exactly correct)
 
-        Takes:
-        source_lang: a two-letter string representing the source language
-        target_lang: a two-letter string representing the target language
-        i: tracking the for-loop for calculation of nearest
-        sim: most similar words from similarity_()
-        top_k: the number of predictions we're checking for in the ground truth list
-        word: the word we are interested in evaluating
-
-        Returns:
-        nearest: the top_k nearest neighbors of word
-        valid_translation: tracks how many words in "nearest" are valid translations 
-            (range 0-k, restricted by the number of translations in the ground truth list)
-        """
-
-        GTT_BASE = '/home/rhopper/W266-Fall-2017-Final-Project/BaselineModels/data/ground_truth_translations/' #'/home/mmillervedam/ProjectRepo/BaselineModels/data/ground_truth_translations/'
-        GTT_PATH = GTT_BASE + "%s-%s-clean.txt" % (source_lang, target_lang)
-        gtt = pd.read_csv(GTT_PATH, names = [source_lang, target_lang], sep=" ", header=None)
-
-        valid_translation=0
-        nearest = (-sim[(len(sim)/2)+i, :]).argsort()[1:top_k + 1] #Take the nearest from the second half of the matrix (target language is second half)
-        for k in range(top_k):
-            close_word = self.index[nearest[k]]
-            total_translations = (gtt[gtt[source_lang] == word])
-            if close_word in total_translations[total_translations.columns[1]].values:
-                valid_translation+=1
-            else:
-                valid_translation+=0
-
-        return nearest, valid_translation
 
     def train(self, nSteps, data, sample = [3,4,5,6,7], learning_rate = None, verbose = True):
         """
@@ -303,48 +270,18 @@ class BiW2V(object):
                     print('... STEP', step, ': Average Loss :', average_loss)
                     average_loss = 0
 
-                # Log validation word closest neighbors
+                # Logging Example Word Neighbors
                 if verbose and step % sim_logging_interval == 0:
                     sim = session.run(self.similarity_, feed_dict = feed_dict)
-                    bli = self.evaluate_prediction()
-                    total_valid=[] #Track the total number of valid translations in the nearest k
-                    any_valid=[] #Track whether ANY of the nearest k were valid translations
                     for i in xrange(len(sample)):
-                        word = self.index[sample[i]]
-                        top_k = 3  # number of nearest neighbors
-                        source_lang = "en" #Hard-coding for testing; should be self.lang1
-                        target_lang = "it" #Hard-coding for testing; should be self.lang2
-                        nearest, valid_translation = bli(source_lang, target_lang, i, sim, top_k, word)
-                        total_valid.append(valid_translation)
-                        log_str = '   Nearest to %s:' % word
+                        word = self.vocab.index[sample[i]]
+                        top_k = 8  # number of nearest neighbors
+                        nearest = (-sim[i, :]).argsort()[1:top_k + 1]
+                        log_str = '   [%s] sim words: ' % word
                         for k in xrange(top_k):
-                            nbr = index[nearest[k]]
+                            nbr = self.vocab.index[nearest[k]]
                             log_str = '%s %s,' % (log_str, nbr)
                         print(log_str)
-
-                    #For any_valid, we need 0/1 to calculate the mean
-                    for s in range(len(total_valid)):
-                        if total_valid[s] > 0:
-                            any_valid.append(1)
-                        else:
-                            any_valid.append(0)
-                    accuracy = (sum(any_valid) / (len(any_valid)))
-                    print('Successful translation rate: %d' % accuracy)
-                
-                
-                
-                # Prior version
-                #if verbose and step % sim_logging_interval == 0:
-                    #sim = session.run(self.similarity_, feed_dict = feed_dict)
-                    #for i in xrange(len(sample)):
-                        #word = self.index[sample[i]]
-                        #top_k = 8  # number of nearest neighbors
-                        #nearest = (-sim[i, :]).argsort()[1:top_k + 1]
-                        #log_str = '   [%s] sim words: ' % word
-                        #for k in xrange(top_k):
-                            #nbr = self.index[nearest[k]]
-                            #log_str = '%s %s,' % (log_str, nbr)
-                        #print(log_str)
 
                 # check stopping criteria
                 step += 1
@@ -355,6 +292,79 @@ class BiW2V(object):
             # results (extract parameters to class vars)
             self.context_embeddings = self.context_embeddings_.eval()
             self.word_embeddings = self.word_embeddings_.eval()
+
+
+    def evaluate_prediction(self, source_lang, target_lang, i, sim, top_k, word):
+        """
+        Given example source words and the ground truth translations,
+        evaluate the number of source language words for which one of the top three predictions is the correct translation
+        (fuzzy measure adopted from stricter Vulic and Moens task which requires that one predicted translation is exactly correct)
+
+        Takes:
+        source_lang: a two-letter string representing the source language
+        target_lang: a two-letter string representing the target language
+        i: tracking the for-loop for calculation of nearest
+        sim: most similar words from similarity_()
+        top_k: the number of predictions we're checking for in the ground truth list
+        word: the word we are interested in evaluating
+
+        Returns:
+        nearest: the top_k nearest neighbors of word
+        valid_translation: tracks how many words in "nearest" are valid translations
+            (range 0-k, restricted by the number of translations in the ground truth list)
+        """
+
+        GTT_BASE = '/home/rhopper/W266-Fall-2017-Final-Project/BaselineModels/data/ground_truth_translations/' #'/home/mmillervedam/ProjectRepo/BaselineModels/data/ground_truth_translations/'
+        GTT_PATH = GTT_BASE + "%s-%s-clean.txt" % (source_lang, target_lang)
+        gtt = pd.read_csv(GTT_PATH, names = [source_lang, target_lang], sep=" ", header=None)
+
+        valid_translation=0
+        nearest = (-sim[(len(sim)/2)+i, :]).argsort()[1:top_k + 1] #Take the nearest from the second half of the matrix (target language is second half)
+        for k in range(top_k):
+            close_word = self.vocab.index[nearest[k]]
+            total_translations = (gtt[gtt[source_lang] == word])
+            if close_word in total_translations[total_translations.columns[1]].values:
+                valid_translation+=1
+            else:
+                valid_translation+=0
+
+        return nearest, valid_translation
+
+
+    def evaluate(self, ground_truth_translations):
+        """
+        Args:
+            ground_truth_translations -
+        """
+        print("ERROR: this method has not been implemented yet")
+        pass
+        # Log validation word closest neighbors
+        # if verbose and step % sim_logging_interval == 0:
+        #     sim = session.run(self.similarity_, feed_dict = feed_dict)
+        #     bli = self.evaluate_prediction()
+        #     total_valid=[] #Track the total number of valid translations in the nearest k
+        #     any_valid=[] #Track whether ANY of the nearest k were valid translations
+        #     for i in xrange(len(sample)):
+        #         word = self.vocab.index[sample[i]]
+        #         top_k = 3  # number of nearest neighbors
+        #         source_lang = "en" #Hard-coding for testing; should be self.lang1
+        #         target_lang = "it" #Hard-coding for testing; should be self.lang2
+        #         nearest, valid_translation = bli(source_lang, target_lang, i, sim, top_k, word)
+        #         total_valid.append(valid_translation)
+        #         log_str = '   Nearest to %s:' % word
+        #         for k in xrange(top_k):
+        #             nbr = index[nearest[k]]
+        #             log_str = '%s %s,' % (log_str, nbr)
+        #         print(log_str)
+        #
+        #     #For any_valid, we need 0/1 to calculate the mean
+        #     for s in range(len(total_valid)):
+        #         if total_valid[s] > 0:
+        #             any_valid.append(1)
+        #         else:
+        #             any_valid.append(0)
+        #     accuracy = (sum(any_valid) / (len(any_valid)))
+        #     print('Successful translation rate: %d' % accuracy)
 
 
     def plot_embeddings_in_2D(self, wordset):
@@ -368,7 +378,7 @@ class BiW2V(object):
         else:
             tsne = TSNE(perplexity=30, n_components=2, init='pca', n_iter=5000)
             low_dim_embs = tsne.fit_transform(self.context_embeddings[:num, :])
-            labels = [self.index[i] for i in xrange(num)]
+            labels = [self.vocab.index[i] for i in xrange(num)]
             plt.figure(figsize=(18, 18))  # in inches
             for i, label in enumerate(labels):
                 x, y = low_dim_embs[i, :]
@@ -377,6 +387,7 @@ class BiW2V(object):
                              textcoords = 'offset points', ha = 'right',
                              va = 'bottom')
             plt.show()
+
 
 #####################################################################
 ##################### Model 1 - random translation ##################
@@ -389,7 +400,7 @@ class BiW2V_random(BiW2V):
     centerword and a randomly chosen translation.
     """
 
-    def __init__(self, languages, multi_dict, to_idxs ,*args, **kwargs):
+    def __init__(self, bilingual_dict, *args, **kwargs):
         """
         Initialize TensorFlow Neural Net Model.
         Args:
@@ -422,7 +433,7 @@ class BiW2V_random(BiW2V):
         """
         target_words = []
         for idx in word_idxs:
-           wrd = self.index[idx]
+           wrd = self.vocab.index[idx]
            translations = self.translations.get(wrd, ['<unk>'])
            target_words.append(np.random.choice(translations))
         return self.get_idxs(target_words)
