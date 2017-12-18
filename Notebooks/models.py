@@ -204,7 +204,7 @@ class BiW2V(object):
         """
         return word_idxs
    
-    def evaluate_prediction(self, source_lang, target_lang, sim, top_k, word):
+    def evaluate_prediction(self, source_lang, target_lang, i, sim, top_k, word):
         """
         Given example source words and the ground truth translations, 
         evaluate the number of source language words for which one of the top three predictions is the correct translation
@@ -213,6 +213,7 @@ class BiW2V(object):
         Takes:
         source_lang: a two-letter string representing the source language
         target_lang: a two-letter string representing the target language
+        i: tracking the for-loop for calculation of nearest
         sim: most similar words from similarity_()
         top_k: the number of predictions we're checking for in the ground truth list
         word: the word we are interested in evaluating
@@ -228,9 +229,9 @@ class BiW2V(object):
         gtt = pd.read_csv(GTT_PATH, names = [source_lang, target_lang], sep=" ", header=None)
 
         valid_translation=0
-        nearest = (-sim[i, :]).argsort()[1:top_k + 1]
+        nearest = (-sim[(len(sim)/2)+i, :]).argsort()[1:top_k + 1] #Take the nearest from the second half of the matrix (target language is second half)
         for k in range(top_k):
-            close_word = reverse_dictionary[nearest[k]]
+            close_word = self.index[nearest[k]]
             total_translations = (gtt[gtt[source_lang] == word])
             if close_word in total_translations[total_translations.columns[1]].values:
                 valid_translation+=1
@@ -295,7 +296,7 @@ class BiW2V(object):
                 _, loss_val = session.run([self.train_step_, self.loss_],
                                           feed_dict = feed_dict)
 
-                # Log Average Loss
+                # Logging Average Loss
                 average_loss += loss_val
                 if verbose and step % loss_logging_interval == 0:
                     average_loss /= loss_logging_interval
@@ -309,11 +310,11 @@ class BiW2V(object):
                     total_valid=[] #Track the total number of valid translations in the nearest k
                     any_valid=[] #Track whether ANY of the nearest k were valid translations
                     for i in xrange(len(sample)):
-                        word = index[sample[i]]
+                        word = self.index[sample[i]]
                         top_k = 3  # number of nearest neighbors
                         source_lang = "en" #Hard-coding for testing; should be self.lang1
                         target_lang = "it" #Hard-coding for testing; should be self.lang2
-                        nearest, valid_translation = bli(source_lang, target_lang, sim, top_k, word)
+                        nearest, valid_translation = bli(source_lang, target_lang, i, sim, top_k, word)
                         total_valid.append(valid_translation)
                         log_str = '   Nearest to %s:' % word
                         for k in xrange(top_k):
