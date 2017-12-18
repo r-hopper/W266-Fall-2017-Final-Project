@@ -150,7 +150,7 @@ def make_bilingual(corpus1,corpus2):
             except:
                 continue
             out.write(line2)
-         
+
 
 class Vocabulary(object):
     """
@@ -170,6 +170,9 @@ class Vocabulary(object):
         self.to_words(ids) - returns list of words for the id list
         self.sentence_to_ids(sentence) - returns list of ids with start & end
     """
+## Mona's notes
+## the wordset passed it may be the bi
+## Maya says in simple substitution embedding that " In reality we should probably modify the Vocab class so that it explicily collects the top words for each language separately and then concatenates the index."
 
     START_TOKEN = "<s>"
     END_TOKEN = "</s>"
@@ -179,13 +182,43 @@ class Vocabulary(object):
     UNK_ID = 2
 
     def __init__(self, tokens, wordset = None, size=None):
+        
         # Count tokens from corpus (filter if wordset was specified)
         keep = lambda x: x in wordset if wordset is not None else True
-        counts = collections.Counter([t for t in tokens if keep(t)])
-        top_counts = counts.most_common(None if size is None else (size - 3))
+        self.language = list()
+        
+        counts_lang1 = collections.Counter()
+        counts_lang2 = collections.Counter()
+        
+        for t in tokens:
+            if keep(t):
+                # check prefix and update self.languages
+                pre = t[0:2]
+                # update language set
+                if pre not in self.language:
+                    self.language.append(pre)                
+                # separately count top words
+                if self.language.index(pre) == 0:
+                    counts_lang1[t] += 1
+                elif self.language.index(pre) == 1:
+                    counts_lang2[t] += 1
+                else:
+                    print("We are only bilingual at the moment.")
+                    
+        top_counts = counts_lang1.most_common(None if size is None else (size/2 - 2)) +             counts_lang1.most_common(None if size is None else (size/2 - 1))
+        
+        
+        # Previous version
+        #        counts = collections.Counter([t for t in tokens if keep(t)])
+        #        top_counts = counts.most_common(None if size is None else (size - 3))
+        #        types = ([self.START_TOKEN, self.END_TOKEN, self.UNK_TOKEN] +
+        #                 [w for w,c in top_counts])
+        
         types = ([self.START_TOKEN, self.END_TOKEN, self.UNK_TOKEN] +
                  [w for w,c in top_counts])
 
+        
+        
         # Easy access to various formats:
         self.wordset = set(types)
         self.index = dict(enumerate(types))
@@ -193,7 +226,6 @@ class Vocabulary(object):
         self.size = len(self.index)
         if size is not None:
             assert(self.size <= size)
-        self.language = ('en','en')
 
     def to_ids(self, words):
         return [self.types.get(w, self.UNK_ID) for w in words]
@@ -203,6 +235,7 @@ class Vocabulary(object):
 
     def sentence_to_ids(self, sentence):
         return [self.START_ID] + self.to_ids(sentence.split()) + [self.END_ID]
+     
 
 
 def batch_generator(corpus, vocabulary, batch_size, window, max_epochs = None):
