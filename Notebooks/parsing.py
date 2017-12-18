@@ -188,6 +188,12 @@ class Vocabulary(object):
         self.size = len(self.index)
         if size is not None:
             assert(self.size <= size)
+    
+    def load_from_index(self, index_dict):
+        self.wordset = set(index_dict.keys())
+        self.index = index_dict
+        self.types = {v:k for k,v in self.index.iteritems()}
+        self.size = len(self.index)
 
     def to_ids(self, words):
         return [self.types.get(w, self.UNK_ID) for w in words]
@@ -215,7 +221,7 @@ class BilingualVocabulary(Vocabulary):
         """
         # Class attribute
         self.language = languages
-
+       
         # helper function for filtering wordset words
         keep = lambda x: x in wordset if wordset is not None else True
 
@@ -235,7 +241,7 @@ class BilingualVocabulary(Vocabulary):
 
         # collect top words from each languages
         top_counts = counts_lang1.most_common(None if size is None else size)
-        top_counts += counts_lang1.most_common(None if size is None else size)
+        top_counts += counts_lang2.most_common(None if size is None else size)
         types = ([self.START_TOKEN, self.END_TOKEN, self.UNK_TOKEN] +
                  [w for w,c in top_counts])
 

@@ -114,7 +114,7 @@ class BiW2V(object):
 
             # Input for hidden layer NOTE: self.input_ is Duong's 'h'
             embed = tf.nn.embedding_lookup(self.C_, self.context_)
-            span = 16 # TODO: fix this so that it infers the context length!
+            span = 8 # TODO: fix this so that it infers the context length!
             self.input_ = tf.div(tf.reduce_sum(embed, 1), span)
 
 
@@ -277,7 +277,7 @@ class BiW2V(object):
                         word = self.vocab.index[sample[i]]
                         top_k = 8  # number of nearest neighbors
                         nearest = (-sim[i, :]).argsort()[1:top_k + 1]
-                        log_str = '   [%s] sim words: ' % word
+                        log_str = '   [%s] closest: ' % word
                         for k in xrange(top_k):
                             nbr = self.vocab.index[nearest[k]]
                             log_str = '%s %s,' % (log_str, nbr)
@@ -406,24 +406,13 @@ class BiW2V_random(BiW2V):
         Args:
           index     - vocabulary dict of {idx : word}.
           H         - embedding size, an int.
-          languages - langauge prefixes, a tuple of str.
-          multi_dict- multilingual dictionary where words
+          bilingual_dict - multilingual dictionary where words
                       are mapped to 1 or more translations.
-          get_idx   - a function that retrieves the index
-                      of a list of words.
-        """           # TODO: fix how we handle the index retrieval
-                      # we're probably going to have to do this in
-                      # the Vocabulary Class anyway to get the bi-
-                      # lingual vocab lists. Maybe pass that object
-                      # in the parent class instead of just an index.
-
+        """  
         # in addition to the normal Word2Vec args....
         super(BiW2V_random, self).__init__(*args, **kwargs)
+        self.translations = bilingual_dict
 
-        # also record the languages and load the dictionary
-        self.languages = languages
-        self.translations = multi_dict
-        self.get_idxs = to_idxs
 
     def translate(self, word_idxs):
         """
@@ -433,7 +422,7 @@ class BiW2V_random(BiW2V):
         """
         target_words = []
         for idx in word_idxs:
-           wrd = self.vocab.index[idx]
-           translations = self.translations.get(wrd, ['<unk>'])
-           target_words.append(np.random.choice(translations))
-        return self.get_idxs(target_words)
+            wrd = self.vocab.index[idx]
+            translations = self.translations.get(wrd, ['<unk>'])
+            target_words.append(np.random.choice(translations))
+        return self.vocab.to_ids(target_words)
