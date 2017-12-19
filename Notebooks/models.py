@@ -520,6 +520,11 @@ class BiW2V_nn(BiW2V_random):
         """
         # run cosine simlilarity using context
         with tf.Session(graph=self.graph) as session:
+            # initialize global vars
+            init = tf.global_variables_initializer()
+            init.run()
+            
+            # run similarity calculations
             feed_dict = {self.centerword_ : word_idxs,
                          self.context_ : context_idxs}
             sim = session.run(self.ctxt_similarity_, 
