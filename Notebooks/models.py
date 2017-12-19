@@ -390,8 +390,8 @@ class BiW2V(object):
             print("You must train the embeddings before plotting.")
         else:
             tsne = TSNE(perplexity=30, n_components=2, init='pca', n_iter=5000)
-            low_dim_embs = tsne.fit_transform(self.context_embeddings[:num, :])
-            labels = [self.vocab.index[i] for i in xrange(num)]
+            low_dim_embs = tsne.fit_transform(self.context_embeddings[:, :])
+            labels = [self.vocab.index[i] for i in wordset]
             plt.figure(figsize=(18, 18))  # in inches
             for i, label in enumerate(labels):
                 x, y = low_dim_embs[i, :]
