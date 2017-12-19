@@ -532,11 +532,11 @@ class BiW2V_nn(BiW2V_random):
         
         # select closest translation for each word
         target_ids = []
-        for idx in word_idxs:
-            wrd = self.vocab.index[idx]
+        for num, wrd_id in enumerate(word_idxs):
+            wrd = self.vocab.index[wrd_id]
             translations = self.translations.get(wrd, ['<unk>'])
             trans_ids = self.vocab.to_ids(translations)
-            dist = [sim[i] for i in trans_ids]
+            dist = [sim[num][i] for i in trans_ids]
             best = np.argmin(dist)
             target_ids.append(trans_ids[best])
         return target_ids   
