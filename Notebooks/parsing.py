@@ -18,6 +18,7 @@ import time
 import resource
 import collections
 import numpy as np
+import pandas as pd
 
 
 class Corpus(object):
@@ -183,6 +184,7 @@ class Vocabulary(object):
 
         # Easy access to various formats:
         self.wordset = set(types)
+        
         self.index = dict(enumerate(types))
         self.types = {v:k for k,v in self.index.iteritems()}
         self.size = len(self.index)
@@ -190,7 +192,7 @@ class Vocabulary(object):
             assert(self.size <= size)
     
     def load_from_index(self, index_dict):
-        self.wordset = set(index_dict.keys())
+        self.wordset = set(index_dict.values())
         self.index = index_dict
         self.types = {v:k for k,v in self.index.iteritems()}
         self.size = len(self.index)
@@ -252,6 +254,37 @@ class BilingualVocabulary(Vocabulary):
         self.size = len(self.index)
         if size is not None:
             assert(self.size <= size * 2 + 3)
+            
+def get_common_words(bivocab):
+    '''
+    Returns a list of words in the vocabulary that are
+    also in the ground truth files.  This opens the ground
+    truth files bi-directionally
+        Args:
+            bivocab   - Vocabulary class object
+        Returns:
+            set of types
+    '''
+        
+    # get languages from bivocab
+    lang1,lang2 = bivocab.language
+  
+    # read gtt files
+    GTT_BASE = '/home/rhopper/W266-Fall-2017-Final-Project/BaselineModels/data/ground_truth_translations/'
+    
+    GTT_PATH1 = GTT_BASE + "%s-%s-clean.csv" % (lang1, lang2)
+    GTT_PATH2 = GTT_BASE + "%s-%s-clean.csv" % (lang2, lang1)
+    gtt1 = pd.read_csv(GTT_PATH1, names = [lang1, lang2], sep=" ", header=None)
+    gtt2 = pd.read_csv(GTT_PATH2, names = [lang2, lang1], sep=" ", header=None)
+
+    # Union of unique words in both gtt files
+    gtt_set = set(gtt1[lang1].unique())
+    gtt_set = gtt_set.union(set(gtt2[lang2].unique()))
+    
+    # Intersection of words in the vocab and gtt
+    s = bivocab.wordset.intersection(gtt_set)
+
+    return s
 
 
 def batch_generator(corpus, vocabulary, batch_size, window, max_epochs = None):
