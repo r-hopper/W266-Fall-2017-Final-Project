@@ -294,13 +294,16 @@ class BiW2V(object):
             self.word_embeddings = self.word_embeddings_.eval()
 
 
-    def evaluate_prediction(self, i, sim, top_k, word):
+    def evaluate_prediction(self, source_lang, target_lang, gtt, i, sim, top_k, word):
         """
         Given example source words and the ground truth translations,
         evaluate the number of source language words for which one of the top three predictions is the correct translation
         (fuzzy measure adopted from stricter Vulic and Moens task which requires that one predicted translation is exactly correct)
 
         Takes:
+        source_lang: source language (first column)
+        target_lang: target language (second column)
+        gtt: ground truth translation dictionary
         i: tracking the for-loop for calculation of nearest
         sim: most similar words from similarity_()
         top_k: the number of predictions we're checking for in the ground truth list
@@ -314,7 +317,7 @@ class BiW2V(object):
         valid_translation=0
         
         print('half of vocab', ((self.vocab.size - 3) / 2 + 3)+i)
-        nearest = (-sim[((self.vocab.size - 3) / 2 + 3)+i, :]).argsort()[1:top_k + 1] #Take the nearest from the second half of the matrix (target language is second half)
+        nearest = (-sim[i, ((self.vocab.size - 3) / 2 + 3):]).argsort()[1:top_k + 1] #Take the nearest from the second half of the matrix (target language is second half)
         #nearest = (-sim[(len(sim)/2)+i, :]).argsort()[1:top_k + 1] #Take the nearest from the second half of the matrix (target language is second half)
         for k in range(top_k):
             close_word = self.vocab.index[nearest[k]]
@@ -327,10 +330,12 @@ class BiW2V(object):
         return nearest, valid_translation
 
 
-    def evaluate(self, ground_truth_translations, sample, verbose=True):
+    def evaluate(self, source_lang, target_lang, gtt, sample, verbose=True):
         """
         Args:
-            ground_truth_translations: the dictionary of ground truth translations 
+            source_lang = source language
+            target_lang = target language
+            gtt: the dictionary of ground truth translations 
             sample: indexes of words to feed to similarity_()
             verbose: (optional) will print mean accuracy if true
         """
@@ -356,7 +361,7 @@ class BiW2V(object):
                 top_k = 3  # number of nearest neighbors
                 #source_lang = "en" #Hard-coding for testing; should be self.vocab.language[0]
                 #target_lang = "it" #Hard-coding for testing; should be self.vocab.language[1]
-                nearest, valid_translation = self.evaluate_prediction(i, sim, top_k, word)
+                nearest, valid_translation = self.evaluate_prediction(source_lang, target_lang, gtt, i, sim, top_k, word)
                 total_valid.append(valid_translation)
 
         #For any_valid, we need 0/1 to calculate the mean
