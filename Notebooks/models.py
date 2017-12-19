@@ -114,9 +114,7 @@ class BiW2V(object):
 
             # Input for hidden layer NOTE: self.input_ is Duong's 'h'
             embed = tf.nn.embedding_lookup(self.C_, self.context_)
-            span = 8 # TODO: fix this so that it infers the context length!
-            self.input_ = tf.div(tf.reduce_sum(embed, 1), span)
-
+            self.input_ = tf.reduce_mean(embed, 1)
 
         # Hidden Layer
         with tf.variable_scope("Hidden_Layer"):
@@ -142,14 +140,6 @@ class BiW2V(object):
         """
         with tf.variable_scope("Training"):
 
-            # print(self.W_.shape)
-            # print(self.b_.shape)
-            # print(self.input_.shape)
-            # print(self.centerword_.shape)
-            # self.labels_ = tf.expand_dims(self.centerword_, axis=1)
-            # print('testing')
-            # print(self.labels_.shape)
-
             # softmax for monolingual label
             mono_args = dict(weights = self.W_,
                              biases = self.b_,
@@ -158,14 +148,14 @@ class BiW2V(object):
                              num_sampled = self.softmax_ns_,
                              num_classes = self.V)
             mono = tf.reduce_mean(tf.nn.sampled_softmax_loss(**mono_args))
+            
             # softmax for crosslingual label
             cross_args = mono_args.copy()
             cross_args['labels'] = tf.expand_dims(self.translation_, axis=1)
             cross = tf.reduce_mean(tf.nn.sampled_softmax_loss(**cross_args))
 
-            # loss function is their sum # TODO add regularizer
-            # TODO: check if there is a way to pass 2 labels to tf.sftmx
-            self.loss_ = mono #+ cross
+            # loss function is their sum 
+            self.loss_ = mono + cross
             optimizer = tf.train.GradientDescentOptimizer(self.learning_rate_)
             self.train_step_ = optimizer.minimize(self.loss_)
 
@@ -198,7 +188,7 @@ class BiW2V(object):
         print("... TF graph created for BiW2V validation.")
 
 
-    def translate(self, word_idxs):
+    def translate(self, word_idxs, context_idxs):
         """
         Helper method used in training to translate centerwords at runtime.
         Base Implementation: no translation, this is a dummy method that
@@ -256,7 +246,7 @@ class BiW2V(object):
                 feed_dict = {self.context_ : batch,
                              self.centerword_ : labels,
                              self.valid_words_ : sample,
-                             self.translation_ : self.translate(labels)}
+                             self.translation_ : self.translate(labels, batch)}
                 if learning_rate is not None:
                     feed_dict[self.learning_rate_] = learning_rate
 
@@ -427,7 +417,7 @@ class BiW2V_random(BiW2V):
         self.translations = bilingual_dict
 
 
-    def translate(self, word_idxs):
+    def translate(self, word_idxs, context_idxs):
         """
         Helper method to return the index of a randomly chosen
         translation for each word. If no translation is found,
@@ -451,7 +441,7 @@ class BiW2V_mle(BiW2V_random):
     centerword and the highest ranked translation.
     """
 
-    def translate(self, word_idxs):
+    def translate(self, word_idxs, context_idxs):
         """
         Helper method to return the index of the highest ranked
         translation for each word. If no translation is found,
@@ -461,10 +451,88 @@ class BiW2V_mle(BiW2V_random):
         for idx in word_idxs:
             wrd = self.vocab.index[idx]
             translations = self.translations.get(wrd, ['<unk>'])
-            ids = self.vocab.to_ids(translations)
-            ids = [i for i in target_ids if i > 2]
+            trans_ids = self.vocab.to_ids(translations)
+            ids = [i for i in trans_ids if i > 2]
             if len(ids) > 1: 
                 target_ids.append(min(ids))
             else:
                 target_ids.append(2)
         return target_ids   
+
+    
+#####################################################################
+############## Model 3 - Cosine Similarity translation ##############
+
+class BiW2V_nn(BiW2V_random):
+    """
+    Bilingual Word2Vec.
+    This model trains embeddings in two languages by jointly
+    optimizing the softmax probability of the source langauge
+    centerword and the translation whose context embedding is
+    closest (by cosine similarity) to the input context.
+    """
+    
+    @with_self_graph
+    def BuildValidationGraph(self):
+        """
+        Use cosine similarity to retrieve words with
+        similar context or word embeddings.
+        """
+        with tf.variable_scope("Validation"):
+            # words to validate
+            self.valid_words_ = tf.placeholder(tf.int32, shape=[None,])
+
+            # Normalized Embeddings facilitate cosine similarity calculation
+            norm = lambda x: tf.sqrt(tf.reduce_sum(tf.square(x),keep_dims=True))
+            self.context_embeddings_ = self.C_ / norm(self.C_)
+            self.word_embeddings_ = self.C_ / norm(self.W_)
+
+            # Retrieve context & word embeddings for validation words
+            embedded_words = tf.nn.embedding_lookup(self.context_embeddings_,
+                                                    self.valid_words_)
+            self.similarity_ = tf.matmul(embedded_words,
+                                         self.context_embeddings_,
+                                         transpose_b=True)
+        
+        with tf.variable_scope("CSim_Translation"):
+            # source signal = context + centerword
+            ctxt_embed = tf.nn.embedding_lookup(self.context_embeddings_, 
+                                                self.context_)
+            ctxt_vector = tf.reduce_mean(ctxt_embed, 1)
+            #tf.expand_dims(self.centerword_, axis=1)
+            cwrd_embed = tf.nn.embedding_lookup(self.context_embeddings_, 
+                                                self.centerword_)
+            embedded_source = tf.add(ctxt_vector, cwrd_embed)
+            
+            # sim calculations for the source signal
+            self.ctxt_similarity_ = tf.matmul(embedded_source,
+                                         self.context_embeddings_,
+                                         transpose_b=True)
+            
+        print("... TF graph created for BiW2V validation.")
+
+
+    def translate(self, word_idxs, context_idxs):
+        """
+        Helper method to return the index of the highest ranked
+        translation for each word. If no translation is found,
+        return the target language <unk> token.
+        """
+        # run cosine simlilarity using context
+        with tf.Session(graph=self.graph) as session:
+            feed_dict = {self.centerword_ : word_idxs,
+                         self.context_ : context_idxs}
+            sim = session.run(self.ctxt_similarity_, 
+                              feed_dict = feed_dict)
+        
+        # select closest translation for each word
+        target_ids = []
+        for idx in word_idxs:
+            wrd = self.vocab.index[idx]
+            translations = self.translations.get(wrd, ['<unk>'])
+            trans_ids = self.vocab.to_ids(translations)
+            dist = [sim[i] for i in trans_ids]
+            best = np.argmin(dist)
+            target_ids.append(trans_ids[best])
+        return target_ids   
+
