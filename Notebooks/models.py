@@ -434,3 +434,32 @@ class BiW2V_random(BiW2V):
             translations = self.translations.get(wrd, ['<unk>'])
             target_words.append(np.random.choice(translations))
         return self.vocab.to_ids(target_words)
+    
+#####################################################################
+###################### Model 2 - MLE translation ####################
+
+class BiW2V_mle(BiW2V_random):
+    """
+    Bilingual Word2Vec.
+    This model trains embeddings in two languages by jointly
+    optimizing the softmax probability of the source langauge
+    centerword and the highest ranked translation.
+    """
+
+    def translate(self, word_idxs):
+        """
+        Helper method to return the index of the highest ranked
+        translation for each word. If no translation is found,
+        return the target language <unk> token.
+        """
+        target_ids = []
+        for idx in word_idxs:
+            wrd = self.vocab.index[idx]
+            translations = self.translations.get(wrd, ['<unk>'])
+            ids = self.vocab.to_ids(translations)
+            ids = [i for i in target_ids if i > 2]
+            if len(ids) > 1: 
+                target_ids.append(min(ids))
+            else:
+                target_ids.append(2)
+        return target_ids   
