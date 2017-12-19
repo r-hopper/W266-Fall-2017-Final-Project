@@ -320,13 +320,14 @@ class BiW2V(object):
         return nearest, valid_translation
 
 
-    def evaluate(self, source_lang, target_lang, gtt, sample, verbose=True):
+    def evaluate(self, source_lang, target_lang, gtt, sample, top_k, verbose=True):
         """
         Args:
             source_lang = source language
             target_lang = target language
             gtt: the dictionary of ground truth translations 
             sample: indexes of words to feed to similarity_()
+            top_k: the number of nearest neighbors desired (to test recall@1 and recall@5)
             verbose: (optional) will print mean accuracy if true
         """
         #Define the feed dict
@@ -348,7 +349,6 @@ class BiW2V(object):
             for i in xrange(len(sample)):
                 word = self.vocab.index[sample[i]]
                 print('word', word)
-                top_k = 3  # number of nearest neighbors
                 #source_lang = "en" #Hard-coding for testing; should be self.vocab.language[0]
                 #target_lang = "it" #Hard-coding for testing; should be self.vocab.language[1]
                 nearest, valid_translation = self.evaluate_prediction(source_lang, target_lang, gtt, i, sim, top_k, word)
