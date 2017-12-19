@@ -182,7 +182,7 @@ class BiW2V(object):
             # words to validate
             self.valid_words_ = tf.placeholder(tf.int32, shape=[None,])
 
-            # Normalized Embeddings facillitate cosine similarity calculation
+            # Normalized Embeddings facilitate cosine similarity calculation
             norm = lambda x: tf.sqrt(tf.reduce_sum(tf.square(x),keep_dims=True))
             self.context_embeddings_ = self.C_ / norm(self.C_)
             self.word_embeddings_ = self.C_ / norm(self.W_)
@@ -326,13 +326,15 @@ class BiW2V(object):
         return nearest, valid_translation
 
 
-    def evaluate(self, ground_truth_translations, verbose=True):
+    def evaluate(self, ground_truth_translations, sample, verbose=True):
         """
         Args:
             ground_truth_translations: the dictionary of ground truth translations 
+            sample: indexes of words to feed to similarity_()
+            verbose: (optional) will print mean accuracy if true
         """
         #Define the feed dict
-        feed_dict = {self.valid_words_ : sample, self.translation_ : self.translate(labels)}
+        feed_dict = {self.valid_words_ : sample}
         
         # Log validation word closest neighbors
         sim = session.run(self.similarity_, feed_dict = feed_dict)
@@ -358,7 +360,8 @@ class BiW2V(object):
             word_acc = (sum(any_valid) / (len(any_valid)))
             accuracy[(word)] = word_acc
             if verbose:
-                print('Successful translation rate: %d' % accuracy)
+                print('Total successful translation rate: %d' % word_acc)
+                print accuracy
             return accuracy
 
 
