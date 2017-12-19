@@ -273,13 +273,13 @@ def get_common_words(bivocab):
     GTT_BASE = '/home/rhopper/W266-Fall-2017-Final-Project/BaselineModels/data/ground_truth_translations/'
     
     GTT_PATH1 = GTT_BASE + "%s-%s-clean.csv" % (lang1, lang2)
-    GTT_PATH2 = GTT_BASE + "%s-%s-clean.csv" % (lang2, lang1)
+    #GTT_PATH2 = GTT_BASE + "%s-%s-clean.csv" % (lang2, lang1)
     gtt1 = pd.read_csv(GTT_PATH1, names = [lang1, lang2], sep=" ", header=None)
-    gtt2 = pd.read_csv(GTT_PATH2, names = [lang2, lang1], sep=" ", header=None)
+    #gtt2 = pd.read_csv(GTT_PATH2, names = [lang2, lang1], sep=" ", header=None)
 
     # Union of unique words in both gtt files
     gtt_set = set(gtt1[lang1].unique())
-    gtt_set = gtt_set.union(set(gtt2[lang2].unique()))
+    #gtt_set = gtt_set.union(set(gtt2[lang2].unique()))
     
     # Intersection of words in the vocab and gtt
     s = bivocab.wordset.intersection(gtt_set)
