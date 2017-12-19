@@ -313,6 +313,7 @@ class BiW2V(object):
         """
         valid_translation=0
         
+        print('half of vocab', ((self.vocab.size - 3) / 2 + 3)+i)
         nearest = (-sim[((self.vocab.size - 3) / 2 + 3)+i, :]).argsort()[1:top_k + 1] #Take the nearest from the second half of the matrix (target language is second half)
         #nearest = (-sim[(len(sim)/2)+i, :]).argsort()[1:top_k + 1] #Take the nearest from the second half of the matrix (target language is second half)
         for k in range(top_k):
@@ -336,18 +337,27 @@ class BiW2V(object):
         #Define the feed dict
         feed_dict = {self.valid_words_ : sample}
         
-        # Log validation word closest neighbors
-        sim = session.run(self.similarity_, feed_dict = feed_dict)
-        bli = self.evaluate_prediction()
-        total_valid=[] #Track the total number of valid translations in the nearest k
-        any_valid=[] #Track whether ANY of the nearest k were valid translations
-        for i in xrange(len(sample)):
-            word = self.vocab.index[sample[i]]
-            top_k = 3  # number of nearest neighbors
-            #source_lang = "en" #Hard-coding for testing; should be self.vocab.language[0]
-            #target_lang = "it" #Hard-coding for testing; should be self.vocab.language[1]
-            nearest, valid_translation = bli(i, sim, top_k, word)
-            total_valid.append(valid_translation)
+        #Create session
+        with tf.Session(graph=self.graph) as session:
+            # initialize all variables
+            init = tf.global_variables_initializer()
+            init.run()
+            print('... Model Initialized')
+        
+            # Log validation word closest neighbors
+            sim = session.run(self.similarity_, feed_dict = feed_dict)
+            print('sim shape', sim.shape)
+            print('vocab size', self.vocab.size)
+            total_valid=[] #Track the total number of valid translations in the nearest k
+            any_valid=[] #Track whether ANY of the nearest k were valid translations
+            for i in xrange(len(sample)):
+                word = self.vocab.index[sample[i]]
+                print('word', word)
+                top_k = 3  # number of nearest neighbors
+                #source_lang = "en" #Hard-coding for testing; should be self.vocab.language[0]
+                #target_lang = "it" #Hard-coding for testing; should be self.vocab.language[1]
+                nearest, valid_translation = self.evaluate_prediction(i, sim, top_k, word)
+                total_valid.append(valid_translation)
 
         #For any_valid, we need 0/1 to calculate the mean
         accuracy = {}
@@ -361,7 +371,7 @@ class BiW2V(object):
             accuracy[(word)] = word_acc
             if verbose:
                 print('Total successful translation rate: %d' % word_acc)
-                print accuracy
+                print(accuracy)
             return accuracy
 
 
