@@ -284,92 +284,6 @@ class BiW2V(object):
             self.word_embeddings = self.word_embeddings_.eval()
 
 
-    def evaluate_prediction(self, source_lang, target_lang, gtt, i, sim, top_k, word):
-        """
-        Given example source words and the ground truth translations,
-        evaluate the number of source language words for which one of the top three predictions is the correct translation
-        (fuzzy measure adopted from stricter Vulic and Moens task which requires that one predicted translation is exactly correct)
-
-        Takes:
-        source_lang: source language (first column)
-        target_lang: target language (second column)
-        gtt: ground truth translation dictionary
-        i: tracking the for-loop for calculation of nearest
-        sim: most similar words from similarity_()
-        top_k: the number of predictions we're checking for in the ground truth list
-        word: the word we are interested in evaluating
-
-        Returns:
-        nearest: the top_k nearest neighbors of word
-        valid_translation: tracks how many words in "nearest" are valid translations
-            (range 0-k, restricted by the number of translations in the ground truth list)
-        """
-        valid_translation=0
-        
-        print('half of vocab', ((self.vocab.size - 3) / 2 + 3)+i)
-        nearest = (-sim[i, ((self.vocab.size - 3) / 2 + 3):]).argsort()[1:top_k + 1] #Take the nearest from the second half of the matrix (target language is second half)
-        #nearest = (-sim[(len(sim)/2)+i, :]).argsort()[1:top_k + 1] #Take the nearest from the second half of the matrix (target language is second half)
-        for k in range(top_k):
-            close_word = self.vocab.index[nearest[k]]
-            total_translations = (gtt[gtt[source_lang] == word])
-            if close_word in total_translations[total_translations.columns[1]].values:
-                valid_translation+=1
-            else:
-                valid_translation+=0
-
-        return nearest, valid_translation
-
-
-    def evaluate(self, source_lang, target_lang, gtt, sample, top_k, verbose=True):
-        """
-        Args:
-            source_lang = source language
-            target_lang = target language
-            gtt: the dictionary of ground truth translations 
-            sample: indexes of words to feed to similarity_()
-            top_k: the number of nearest neighbors desired (to test recall@1 and recall@5)
-            verbose: (optional) will print mean accuracy if true
-        """
-        #Define the feed dict
-        feed_dict = {self.valid_words_ : sample}
-        
-        #Create session
-        with tf.Session(graph=self.graph) as session:
-            # initialize all variables
-            init = tf.global_variables_initializer()
-            init.run()
-            print('... Model Initialized')
-        
-            # Log validation word closest neighbors
-            sim = session.run(self.similarity_, feed_dict = feed_dict)
-            print('sim shape', sim.shape)
-            print('vocab size', self.vocab.size)
-            total_valid=[] #Track the total number of valid translations in the nearest k
-            any_valid=[] #Track whether ANY of the nearest k were valid translations
-            for i in xrange(len(sample)):
-                word = self.vocab.index[sample[i]]
-                print('word', word)
-                #source_lang = "en" #Hard-coding for testing; should be self.vocab.language[0]
-                #target_lang = "it" #Hard-coding for testing; should be self.vocab.language[1]
-                nearest, valid_translation = self.evaluate_prediction(source_lang, target_lang, gtt, i, sim, top_k, word)
-                total_valid.append(valid_translation)
-
-        #For any_valid, we need 0/1 to calculate the mean
-        accuracy = {}
-        for s in range(len(total_valid)):
-            if total_valid[s] > 0:
-                any_valid.append(1)
-            else:
-                any_valid.append(0)
-            word = self.vocab.index[sample[s]]
-            word_acc = (sum(any_valid) / (len(any_valid)))
-            accuracy[(word)] = word_acc
-            if verbose:
-                print('Total successful translation rate: %d' % word_acc)
-                print(accuracy)
-            return accuracy
-
-
     def plot_embeddings_in_2D(self, wordset):
         """
         Plot 2D representation of embeddings.
@@ -541,3 +455,88 @@ class BiW2V_nn(BiW2V_random):
             target_ids.append(trans_ids[best])
         return target_ids   
 
+    
+#####################################################################
+############## Evaluation on Ground Truth Translations ##############
+
+def evaluateBLI(C_matrix, vocab, gtt_df, sample, top_k, verbose=True):
+    """
+    Evaluate a BiW2V model on the Bilingual Induction Task.
+    Args:
+        C_matrix  - word embeddings to evaluate
+        vocab  - Vocabulary object whose index matches C
+        gtt_df - dataframe of ground truth translations 
+                 NOTE: this is unidirectional eg. it --> en
+        sample - indexes of words to feed to similarity_()
+                 NOTE: these words should come from the same language
+                 (in Duong et al, the non-english language)
+        top_k  - the number of nearest neighbors desired (to test recall@1 and recall@5)
+        verbose: (optional) will print mean accuracy if true
+    """
+    
+    src = gtt_df.columns[0] # source language
+    v2_start = (vocab.size - 3) / 2 + 3 # index of 1st word in 2nd language
+    
+    # Confirm ground truth translation direction
+    err_msg = 'ERROR: cant evaluate sample %s with %s gtt' %(sample[0], src)
+    if src == vocab.language[0]:
+        tgt = vocab.language[1]
+        order = 1 # this is used to subset the sim matrix in the right order
+        assert sample[0] < v2_start, err_msg
+    elif src == vocab.language[1]:
+        tgt = vocab.language[0]
+        order = -1 # this is used to subset the sim matrix in the right order
+        assert sample[0] >= v2_start, err_msg
+    print("... Evaluating %s '%s' Ground Truth Translations" % (len(sample), src))
+    
+    # Initialize model
+    model = BiW2V(vocab = vocab, H = C_matrix.shape[1])
+    model.BuildCoreGraph()
+    model.BuildValidationGraph()
+    
+    # Define the feed dict
+    feed_dict = {model.C_: C_matrix, 
+                 model.valid_words_ : sample}
+
+    #Create session
+    with tf.Session(graph=model.graph) as session:
+        # initialize all variables
+        init = tf.global_variables_initializer()
+        init.run()
+        print('... finding neighbors...')
+
+        # compute similarity for evaluation words
+        sim = session.run(model.similarity_, feed_dict = feed_dict)
+        src_sim, tgt_sim = (sim[:,3:v2_start],sim[:,v2_start:])[::order]
+        #print('sim shape', sim.shape)         # FOR DEBUGGING
+        #print('src_sim shape', src_sim.shape) # FOR DEBUGGING
+        #print('tgt_sim shape', tgt_sim.shape) # FOR DEBUGGING
+        
+    # get nearest k in source and target languages
+    idx_offset = (3, v2_start)[::order] # readjust to match vocab.index
+    src_nbrs = (-src_sim).argsort()[:,:top_k] + idx_offset[0]
+    tgt_nbrs = (-tgt_sim).argsort()[:,:top_k] + idx_offset[1]
+    #print('src_nbrs', src_nbrs[0]) # FOR DEBUGGING
+    #print('tgt_nbrs', tgt_nbrs[0]) # FOR DEBUGGING
+
+    # check translations
+    #total_valid = []
+    any_valid = 0 
+    for i, wrd_id in enumerate(sample):
+        wrd = vocab.to_words([wrd_id])[0]
+        nbrs = set(tgt_nbrs[i])
+        real_translations = gtt_df[tgt][gtt_df[src] == wrd].tolist()
+        n = len(nbrs.intersection(vocab.to_ids(real_translations)))
+        any_valid += int(n > 0)
+        #total_valid.append(n)
+        #print(wrd, vocab.to_words(nbrs), n, real_translations, any_valid) # FOR DEBUGGING
+        #if i > 3: # FOR DEBUGGING
+        #    break # FOR DEBUGGING
+
+    # report accuracy for target language
+    tot = len(sample)
+    word_acc = float(float(any_valid)/float(tot))
+    print('... Done. Total successful translation rate: %d (%d / %d)' %(word_acc, any_valid, tot))
+    
+    # return translation matrices
+    return src_nbrs, tgt_nbrs
