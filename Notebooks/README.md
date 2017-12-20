@@ -16,3 +16,10 @@ Please see docstrings for more detailed information about each file including us
 8. [Dictionaries & Vocabularies.ipynb]("./Dictionaries & Vocabularies.ipynb") _Training Bilingual Vocabularies and loading panlex dictionaries on fullsize shuffled corpora for each language pair so that they can be easily loaded & used in training._
 9. [MLE Substitution_Embeddings](./MLE_Substitution_Embeddings.ipynb) _Testing `BiW2V_mle` class from `models.py` which trains bilingual word embeddings using the highest ranked translation to substitute for the centeword. Trains both random & MLE embeddings with 600K iterations and a learning rate of 0.5 on en-es corpus.This file also includes a demo of how to reload saved embeddings & use them to compute word similarity._
 10. [CSim Substitution_Embeddings](./CSim_Substitution_Embeddings.ipynb) _Testing `BiW2V_nn` class from `models.py` which trains bilingual word embeddings using the highest ranked translation to substitute for the centeword. Trains both random & MLE embeddings with 600K iterations and a learning rate of 0.5 on en-es corpus._
+
+## Embeddings:
+Each of these notebooks include training & validation for 3 models
+* [English - Italian](./English-Italian_embeddings.ipynb)
+* [English - Spanish](./English-Spanish_embeddings.ipynb)
+* [English - Dutch](./English-Dutch_embeddings.ipynb)
+* [English - Japonese](./English-Japonese_embeddings.ipynb)
