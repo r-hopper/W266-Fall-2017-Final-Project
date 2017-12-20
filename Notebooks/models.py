@@ -27,6 +27,7 @@ AND: code provided as part of MIDS w266 assignment 4.
 """
 
 from __future__ import print_function
+from __future__ import division
 import os
 import math
 import types
@@ -475,7 +476,7 @@ def evaluateBLI(C_matrix, vocab, gtt_df, sample, top_k, verbose=True):
     """
     
     src = gtt_df.columns[0] # source language
-    v2_start = (vocab.size - 3) / 2 + 3 # index of 1st word in 2nd language
+    v2_start = int((vocab.size - 3) / 2 + 3) # index of 1st word in 2nd language
     
     # Confirm ground truth translation direction
     err_msg = 'ERROR: cant evaluate sample %s with %s gtt' %(sample[0], src)
