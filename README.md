@@ -5,8 +5,11 @@ w266 : Natural Language Processing, Fall 2017
 UC Berkeley School of Information, MIDS Program  
 
 **About this Project**
-_fill in smth. here before sharing this repo with others_
-
+_For our final project we developed a Python implementation of a recently published paper discussing a strategy to learn crosslingual word embeddings without parallel corpora. This repo contains the code and suppporting files related to our work. Our final implmentation can be found [`models.py`](./Notebooks/models.py) and its use is demonstrated in the following Python Notebooks:_
+* [English - Italian](./English-Italian_embeddings.ipynb)
+* [English - Spanish](./English-Spanish_embeddings.ipynb)
+* [English - Dutch](./English-Dutch_embeddings.ipynb)
+* [English - Japonese](./English-Japonese_embeddings.ipynb)
 
 ## Quick Links
 *  [Original Paper](https://arxiv.org/pdf/1606.09403.pdf) Duong, Long & Kanayama, Hiroshi & Ma, Tengfei & Bird, Steven & Cohn, Trevor. (2016). Learning Crosslingual Word Embeddings without Bilingual Corpora. 1285-1295. 10.18653/v1/D16-1136.
@@ -15,12 +18,13 @@ _fill in smth. here before sharing this repo with others_
 * [Word2Vec in TensorFlow Tutorial](http://adventuresinmachinelearning.com/word2vec-tutorial-tensorflow/) from Adventures in Machine Learning.
 
 ## TO DO (reverse chronological order)
-* Sleep a lot. 
 * Write up each model's architecture/development/interpretation/performance.
+  > UPDATE 12/19 Done!
 * Rewrite 'Lit Review' section to narrow the scope (just focus on answering the questions posed in the milestone)
   > UPDATE 12/15: Have written outlines for the answers to the milestone questions, and have tried to give more cohesion to the lit review section. Our reviews of the papers are fairly comprehensive, but need stronger/clearer ties back to Duong et al.
 * Chose a set of Demo words to illustrate vector performance w/ cosine similarity.
 * Evaluate all 3 models on the BLI
+  > UPDATE 12/19 Done!
 * Write the Bilingual Induction task Evaluation Code
   > UPDATE 12/15: evaluate_translation() (and the code to slot it into models.py) is written in a notebook, but needs to be incorporated and tested in models.py
 * Create a third model that uses context to pick the word to substitute on
