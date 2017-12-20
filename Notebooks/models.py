@@ -525,17 +525,18 @@ def evaluateBLI(C_matrix, vocab, gtt_df, sample, top_k, verbose=True):
     for i, wrd_id in enumerate(sample):
         wrd = vocab.to_words([wrd_id])[0]
         nbrs = set(tgt_nbrs[i])
-        real_translations = gtt_df[tgt][gtt_df[src] == wrd]
+        real_translations = gtt_df[tgt][gtt_df[src] == wrd].tolist()
         n = len(nbrs.intersection(vocab.to_ids(real_translations)))
         any_valid += int(n > 0)
         #total_valid.append(n)
-        #print(wrd, vocab.to_words(nbrs), n) # FOR DEBUGGING
+        #print(wrd, vocab.to_words(nbrs), n, real_translations, any_valid) # FOR DEBUGGING
         #if i > 3: # FOR DEBUGGING
         #    break # FOR DEBUGGING
 
     # report accuracy for target language
-    word_acc = any_valid / float(len(sample))
-    print('... Done. Total successful translation rate: %d' %(word_acc))
+    tot = len(sample)
+    word_acc = float(float(any_valid)/float(tot))
+    print('... Done. Total successful translation rate: %d (%d / %d)' %(word_acc, any_valid, tot))
     
     # return translation matrices
     return src_nbrs, tgt_nbrs
