@@ -11,7 +11,7 @@ _For our final project we developed a Python implementation of a recently publis
 * [English - Dutch](./English-Dutch_embeddings.ipynb)
 * [English - Japanese](./English-Japonese_embeddings.ipynb)
 
-Our full write-up is located here: [Short Paper](./Deliverables/W266 Fall 2017 Final Project - Hopper, Iwamoto, Miller-Vedam.pdf)
+Our full write-up is located here: [Short Paper](https://github.com/r-hopper/W266-Fall-2017-Final-Project/blob/master/Deliverables/W266%20Fall%202017%20Final%20Project%20-%20Hopper%2C%20Iwamoto%2C%20Miller-Vedam.pdf)
 
 ## Quick Links
 *  [Original Paper](https://arxiv.org/pdf/1606.09403.pdf) Duong, Long & Kanayama, Hiroshi & Ma, Tengfei & Bird, Steven & Cohn, Trevor. (2016). Learning Crosslingual Word Embeddings without Bilingual Corpora. 1285-1295. 10.18653/v1/D16-1136.
