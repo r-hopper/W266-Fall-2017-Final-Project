@@ -6,10 +6,10 @@ UC Berkeley School of Information, MIDS Program
 
 **About this Project**
 _For our final project we developed a Python implementation of a recently published paper discussing a strategy to learn crosslingual word embeddings without parallel corpora. This repo contains the code and suppporting files related to our work. Our final implmentation can be found [`models.py`](./Notebooks/models.py) and its use is demonstrated in the following Python Notebooks:_
-* [English - Italian](./English-Italian_embeddings.ipynb)
-* [English - Spanish](./English-Spanish_embeddings.ipynb)
-* [English - Dutch](./English-Dutch_embeddings.ipynb)
-* [English - Japanese](./English-Japonese_embeddings.ipynb)
+* [English - Italian](./Notebooks/English-Italian_embeddings.ipynb)
+* [English - Spanish](./Notebooks/English-Spanish_embeddings.ipynb)
+* [English - Dutch](./ENotebooks/nglish-Dutch_embeddings.ipynb)
+* [English - Japanese](./Notebooks/English-Japanese_embeddings.ipynb)
 
 Our full write-up is located here: [Short Paper](https://github.com/r-hopper/W266-Fall-2017-Final-Project/blob/master/Deliverables/W266%20Fall%202017%20Final%20Project%20-%20Hopper%2C%20Iwamoto%2C%20Miller-Vedam.pdf)
 
